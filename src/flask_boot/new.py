@@ -6,6 +6,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from datetime import datetime
 import subprocess
 import click
+from pkg_resources import resource_filename
 
 @click.command()
 @click.argument("name")
@@ -51,43 +52,31 @@ def new(name):
 	os.mkdir(name)
 	os.chdir(name)
 
-	# Create top level directories
-	os.mkdir("src")
-	os.mkdir("tests")
-	os.mkdir("src/models")
-	os.mkdir("src/templates")
-	os.mkdir("src/static")
-	os.mkdir("src/routes")
-	os.mkdir("src/blueprints")
-	
-	# Create README.md
-	copy_template("README.md", name=name[0].upper() + name[1:])
+	# Walk the app template and copy every file and directory
+	for dirpath, dirs, files in os.walk(resource_filename("flask_boot", "template")):
+		pattern = r"template\/*(.*)"
+		match = re.search(pattern, dirpath)
+		path = match.group(1)
+		for d in dirs:
+			resource = path + "/" + d if path else d
+			if "__pycache__" not in resource:
+				os.mkdir(resource)
+		for f in files:
+			resource = path + "/" + f if path else f
+			if "__pycache__" not in resource:
+				copy_template(resource, name=name)
 
-	# Create .gitignore, set up git repo
-	copy_template(".gitignore")
+	# Initialize git repo
 	subprocess.run(['git', 'init', "--initial-branch=main"])
-
-	# Create main.py
-	copy_template("main.py")
-
-	# Set up virtual env
+	# Initialize virtual env
 	subprocess.run(["python3", "-m", "venv", "venv"])
 	## Install requirements
-	subprocess.run([f'venv/bin/pip', 'install', 'flask'])
+	requirements = ["flask", "pytest"]
+	subprocess.run([f'venv/bin/pip', 'install'] + requirements)
 	## Set default environment variables
 	envs = {
 		"FLASK_APP": "main.py",
-		"FLASK_ENV": "development"
+		"FLASK_ENV": "development",
+		"SECRET_KEY": os.urandom(24),
 	}
 	set_env_vars(skip_check=True, **envs)
-
-
-	# Copy files in src directory
-	copy_template("src/__init__.py")
-	copy_template("src/config.py")
-
-	# Copy files in routes directory
-	copy_template("src/routes/__init__.py")
-
-	# Copy files in models directory
-	copy_template("src/models/__init__.py")
