@@ -26,6 +26,14 @@ The `new` command creates a Flask app in a new directory with the specified name
 
 The `destroy` command will recursively erase a directory with the specified name. Be careful with this, as it will erase any directory you specify without checking to make sure it's actually a Flask-Boot project. 
 
+## Tests
+Tests are run with [tox](https://tox.readthedocs.io/en/latest/) against python 3.9. 
+
+From the root directory of the project, simply call:
+```bash
+tox
+```
+
 ## Roadmap
 * Finish building the basic template. Add SQLAlchemy (Flask-SQLAlchemy) + Alembic (Flask-Migrate). 
 * Extend Flask's CLI with a set of commands for quickly generating and destroying assets. E.g. `flask g route login` might generate a view function, map it to a url, generate a template, and generate a test.

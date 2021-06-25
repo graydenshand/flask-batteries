@@ -3,9 +3,9 @@ import os
 from src.config import DevelopmentConfig, ProductionConfig
 
 if os.environ.get("FLASK_ENV") == "development":
-	app = create_app(config=DevelopmentConfig)
+    app = create_app(config=DevelopmentConfig)
 else:
-	app = create_app(config=ProductionConfig)
+    app = create_app(config=ProductionConfig)
 
-if __name__ =='__main__':
-	app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000))
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=os.environ.get("PORT", 5000))

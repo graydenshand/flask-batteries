@@ -2,24 +2,23 @@ from flask import Flask
 from .config import ProductionConfig
 from .routes import *
 
+
 def create_app(config=ProductionConfig):
-	app = Flask(__name__)
-	
-	with app.app_context():
-		# Load app config
-		app.config.from_object(config)
+    app = Flask(__name__)
 
-		# Register routes
-		app.add_url_rule("/", view_func=index)
+    with app.app_context():
+        # Load app config
+        app.config.from_object(config)
 
-		@app.shell_context_processor
-		def make_shell_context():
-			return {}
+        # Register routes
+        app.add_url_rule("/", view_func=index)
 
-		@app.context_processor
-		def inject_global_template_variables():
-			return {
-				"application_name": {{ name }}
-			}
+        @app.shell_context_processor
+        def make_shell_context():
+            return {}
 
-	return app
+        @app.context_processor
+        def inject_global_template_variables():
+            return {"application_name": {{name}}}
+
+    return app
