@@ -19,6 +19,6 @@ def create_app(config=ProductionConfig):
 
         @app.context_processor
         def inject_global_template_variables():
-            return {"application_name": {{name}}}
+            return {"application_name": "{{name}}", "app": app}
 
     return app

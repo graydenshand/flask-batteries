@@ -75,6 +75,6 @@ def new(name):
     envs = {
         "FLASK_APP": "main.py",
         "FLASK_ENV": "development",
-        "SECRET_KEY": os.urandom(24),
+        "SECRET_KEY": os.urandom(24).hex(),
     }
     set_env_vars(skip_check=True, **envs)

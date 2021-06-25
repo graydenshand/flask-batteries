@@ -8,6 +8,15 @@
 </head>
 <body>
 {% block body %}{% endblock %}
+
+<!-- Minified JS/CSS Bundle from Webpack -->
+{% if app.config.ENV == 'development' %}
+	<!-- Pull from livereload server in development -->
+<script src="http://localhost:3000/main.js"></script>
+{% else %}
+<script src="static/main.js"></script>
+{% endif %}
+<!-- END JS/CSS Bundle from Webpack -->
 </body>
 </html>
 {%- endraw %}
