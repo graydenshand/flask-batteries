@@ -69,7 +69,7 @@ def new(name):
     # Initialize virtual env
     subprocess.run(["python3", "-m", "venv", "venv"])
     ## Install requirements
-    requirements = ["flask", "pytest"]
+    requirements = ["flask", "pytest", "requests"]
     subprocess.run([f"venv/bin/pip", "install"] + requirements)
     ## Set default environment variables
     envs = {

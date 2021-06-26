@@ -14,6 +14,18 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
 
+    # Add all files in ./src/assets directory to watched files list
+    extra_files = []
+    watched_directories = ["./src/assets"]
+    for directory in watched_directories:
+        for dirpath, dirs, files in os.walk(directory):
+            for filename in files:
+                filename = os.path.join(dirpath, filename)
+                if os.path.isfile(filename):
+                    extra_files.append(filename)
+    os.environ["FLASK_RUN_EXTRA_FILES"] = ":".join(extra_files)
+
 
 class TestingConfig(Config):
     TESTING = True
+    ENV = "testing"

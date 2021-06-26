@@ -3,18 +3,19 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title></title>
+	<title>{{ application_name }}</title>
 	{% block head %}{% endblock %}
 </head>
 <body>
 {% block body %}{% endblock %}
 
 <!-- Minified JS/CSS Bundle from Webpack -->
-{% if app.config.ENV == 'development' %}
-	<!-- Pull from livereload server in development -->
-<script src="http://localhost:3000/main.js"></script>
+{% if use_webpack_dev_server %}
+	<!-- Pull static assets from webpack dev server -->
+	<script src="http://localhost:3000/static/main.js"></script>
 {% else %}
-<script src="static/main.js"></script>
+	<!-- Pull static assets from static folder -->
+	<script src="/static/main.js"></script>
 {% endif %}
 <!-- END JS/CSS Bundle from Webpack -->
 </body>

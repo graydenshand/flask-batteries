@@ -29,5 +29,5 @@ def test_new_creates_all_resources_in_template_directory(cli, app):
 
 def test_generated_app_passes_all_generated_tests(cli, app):
     # Run the generated app's test suite and verify exit code is 0
-    run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)
+    run_tests = subprocess.run("source venv/bin/activate && npm install --save-dev && pytest", shell=True)
     assert run_tests.returncode == 0, run_tests.stdout
