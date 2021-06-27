@@ -8,6 +8,7 @@ import subprocess
 import click
 from pkg_resources import resource_filename
 import shutil
+import pathspec
 
 @click.command()
 @click.argument("name")
@@ -22,12 +23,12 @@ def new(name):
         return template.render(**params)
 
     def copy_template(filename, **params):
-        if "__pycache__" not in filename and '.DS_Store' not in filename:
-            if "src/assets/images" not in filename:
-                with open(filename, "w") as f:
-                    f.write(render_template(filename, **params))
-            else:
-                shutil.copyfile(resource_filename("flask_boot", f"template/{filename}"), filename)
+        if "src/assets/images" not in filename:
+            with open(filename, "w+") as f:
+                f.write(render_template(filename, **params))
+        else:
+            # Copy image files directly
+            shutil.copyfile(resource_filename("flask_boot", f"template/{filename}"), filename)
         return
 
     def set_env_vars(skip_check=False, **kwargs):
@@ -54,18 +55,23 @@ def new(name):
     os.mkdir(name)
     os.chdir(name)
 
+    with open(resource_filename("flask_boot", "template/.gitignore"), 'r') as f:
+        ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
+    ignore_matches = list(ignore_spec.match_tree(resource_filename("flask_boot", "template")))
+    print(ignore_matches)
     # Walk the app template and copy every file and directory
     for dirpath, dirs, files in os.walk(resource_filename("flask_boot", "template")):
         pattern = r"template\/*(.*)"
         match = re.search(pattern, dirpath)
         path = match.group(1)
         for d in dirs:
-            resource = path + "/" + d if path else d
-            if "__pycache__" not in resource:
+            if d != '__pycache__':
+                resource = path + "/" + d if path else d
                 os.mkdir(resource)
         for f in files:
             resource = path + "/" + f if path else f
-            copy_template(resource, name=name)
+            if resource not in ignore_matches:
+                copy_template(resource, name=name)
 
     # Initialize git repo
     subprocess.run(["git", "init", "--initial-branch=main"])
