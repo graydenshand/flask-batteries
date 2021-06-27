@@ -19,11 +19,11 @@ def test_new_creates_all_resources_in_template_directory(cli, app):
         path = match.group(1)
         for d in dirs:
             resource = "./" + path + "/" + d if path else d
-            if "__pycache__" not in resource:
+            if "__pycache__" not in resource and '.DS_Store' not in resource:
                 assert os.path.exists(resource)
         for f in files:
             resource = "./" + path + "/" + f if path else f
-            if "__pycache__" not in resource:
+            if "__pycache__" not in resource and '.DS_Store' not in resource:
                 assert os.path.exists(resource)
 
 

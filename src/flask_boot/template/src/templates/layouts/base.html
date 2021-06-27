@@ -4,20 +4,14 @@
 <head>
 	<meta charset="utf-8">
 	<title>{{ application_name }}</title>
+	<link rel="icon" type="text/css" href="{{ static_url_for('images/flask-icon.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ static_url_for('main.css') }}">
 	{% block head %}{% endblock %}
 </head>
 <body>
 {% block body %}{% endblock %}
 
-<!-- Minified JS/CSS Bundle from Webpack -->
-{% if use_webpack_dev_server %}
-	<!-- Pull static assets from webpack dev server -->
-	<script src="http://localhost:3000/static/main.js"></script>
-{% else %}
-	<!-- Pull static assets from static folder -->
-	<script src="/static/main.js"></script>
-{% endif %}
-<!-- END JS/CSS Bundle from Webpack -->
+<script src="{{ static_url_for('main.js') }}"></script>
 </body>
 </html>
 {%- endraw %}

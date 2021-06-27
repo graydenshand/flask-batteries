@@ -7,7 +7,7 @@ from datetime import datetime
 import subprocess
 import click
 from pkg_resources import resource_filename
-
+import shutil
 
 @click.command()
 @click.argument("name")
@@ -22,8 +22,12 @@ def new(name):
         return template.render(**params)
 
     def copy_template(filename, **params):
-        with open(filename, "w") as f:
-            f.write(render_template(filename, **params))
+        if "__pycache__" not in filename and '.DS_Store' not in filename:
+            if "src/assets/images" not in filename:
+                with open(filename, "w") as f:
+                    f.write(render_template(filename, **params))
+            else:
+                shutil.copyfile(resource_filename("flask_boot", f"template/{filename}"), filename)
         return
 
     def set_env_vars(skip_check=False, **kwargs):
@@ -61,8 +65,7 @@ def new(name):
                 os.mkdir(resource)
         for f in files:
             resource = path + "/" + f if path else f
-            if "__pycache__" not in resource:
-                copy_template(resource, name=name)
+            copy_template(resource, name=name)
 
     # Initialize git repo
     subprocess.run(["git", "init", "--initial-branch=main"])

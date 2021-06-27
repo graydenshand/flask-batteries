@@ -1,0 +1,1 @@
+from .static_url_for import static_url_for

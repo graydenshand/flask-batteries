@@ -3,9 +3,7 @@ from .config import ProductionConfig
 from .routes import *
 import subprocess
 import requests
-
-global USE_WEBPACK_DEV_SERVER
-USE_WEBPACK_DEV_SERVER = False
+from .helpers import static_url_for
 
 
 def create_app(config=ProductionConfig):
@@ -35,13 +33,13 @@ def create_app(config=ProductionConfig):
                     try:
                         r = requests.get("http://localhost:3000/static/main.js")
                         # Webpack dev server is running
-                        USE_WEBPACK_DEV_SERVER = True
+                        app.config['USE_WEBPACK_DEV_SERVER'] = True
                     except requests.exceptions.ConnectionError as e:
                         # Webpack dev server is not running
                         app.logger.warn(
                             "Compiling static assets. To avoid this warning, start the webpack dev server in a new shell with `npx webpack serve`."
                         )
-                        USE_WEBPACK_DEV_SERVER = False
+                        app.config['USE_WEBPACK_DEV_SERVER'] = False
                         subprocess.run("npx webpack", shell=True)
 
             @app.before_request
@@ -51,10 +49,10 @@ def create_app(config=ProductionConfig):
                     try:
                         r = requests.get("http://localhost:3000/static/main.js")
                         # Webpack dev server is running
-                        USE_WEBPACK_DEV_SERVER = True
+                        app.config['USE_WEBPACK_DEV_SERVER'] = True
                     except requests.exceptions.ConnectionError as e:
                         # Webpack dev server is not running
-                        USE_WEBPACK_DEV_SERVER = False
+                        app.config['USE_WEBPACK_DEV_SERVER'] = False
 
         @app.context_processor
         def inject_global_template_variables():
@@ -62,7 +60,8 @@ def create_app(config=ProductionConfig):
             return {
                 "application_name": "flask_boot_test",
                 "app": app,
-                "use_webpack_dev_server": USE_WEBPACK_DEV_SERVER,
+                #"use_webpack_dev_server": USE_WEBPACK_DEV_SERVER,
+                "static_url_for": static_url_for
             }
 
         # Register commands

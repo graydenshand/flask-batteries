@@ -5,6 +5,7 @@ class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24))
     DEBUG = False
     TESTING = False
+    USE_WEBPACK_DEV_SERVER = True
 
 
 class ProductionConfig(Config):
@@ -13,7 +14,6 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-
     # Add all files in ./src/assets directory to watched files list
     extra_files = []
     watched_directories = ["./src/assets"]
