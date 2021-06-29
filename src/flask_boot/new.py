@@ -10,7 +10,7 @@ from pkg_resources import resource_filename
 import shutil
 import pathspec
 
-@click.command()
+@click.command(help="Generate a new flask_boot app")
 @click.argument("name")
 def new(name):
     print("Generating new app named: %s" % name)
