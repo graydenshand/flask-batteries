@@ -1,5 +1,7 @@
 from flask import render_template
+from flask.views import MethodView
 
 
-def index():
-    return render_template("index/index.html")
+class Index(MethodView):
+    def get(self):
+        return render_template("index/index.html")

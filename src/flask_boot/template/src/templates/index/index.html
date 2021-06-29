@@ -2,6 +2,10 @@
 {% extends 'layouts/base.html' %}
 
 {% block body %}
-<h1>Hello World!</h1>
+<main class="container">
+	<div>
+		<img src="{{ static_url_for('images/flask-logo.png') }}" alt="Flask Logo" />
+	</div>
+</main>
 {% endblock %}
 {%- endraw %}

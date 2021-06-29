@@ -7,6 +7,7 @@ module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: [
     "./assets/javascript/index.js",
+    "./assets/stylesheets/styles.scss",
   ],
   output: {
     filename: 'main.js',

@@ -1,1 +1,1 @@
-from .static_url_for import static_url_for
+from .webpack import webpack_init, static_url_for

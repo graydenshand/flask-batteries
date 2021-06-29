@@ -58,7 +58,6 @@ def new(name):
     with open(resource_filename("flask_boot", "template/.gitignore"), 'r') as f:
         ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
     ignore_matches = list(ignore_spec.match_tree(resource_filename("flask_boot", "template")))
-    print(ignore_matches)
     # Walk the app template and copy every file and directory
     for dirpath, dirs, files in os.walk(resource_filename("flask_boot", "template")):
         pattern = r"template\/*(.*)"

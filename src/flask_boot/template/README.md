@@ -15,12 +15,12 @@ If you do not already have them installed, follow the guides below:
 * [Installing npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 * [Installing npx](https://www.npmjs.com/package/npx)
 
-After installing npm, install the project dependencies with: 
+Now that you have npm installed, install the project dependencies with: 
 ```bash
 npm install
 ```
 
-Next, activate your virtual environment:
+Next, activate your virtual python environment:
 ```bash
 source venv/bin/activate
 ```
