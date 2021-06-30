@@ -24,8 +24,8 @@ def route(name):
 	with open("src/routes/__init__.py", "r+") as f:
 		content = f.read()
 		content = content.split("\n")
-		content.remove(f"from .{name} import {snake_to_camel_case(name)}")
-		content.remove(f"\tapp.add_url_rule(\"/{name.replace('_','-')}/\", view_func={snake_to_camel_case(name)}.as_view(\"{name}\"))")
+		content.remove(f"from .{name} import {name}_view")
+		content.remove(f"\tapp.add_url_rule(\"/{name.replace('_','-')}/\", view_func={name}_view)")
 		f.seek(0)
 		f.write("\n".join(content))
 		f.truncate()

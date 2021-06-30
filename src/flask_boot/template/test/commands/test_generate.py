@@ -9,6 +9,6 @@ def test_generate_route_creates_correct_files(cli):
     assert os.path.exists("test/routes/test_sign_up.py")
     with open("src/routes/__init__.py", "r") as f:
         content = f.read()
-        assert "from .sign_up import SignUp" in content
-        assert "\tapp.add_url_rule(\"/sign-up/\", view_func=SignUp.as_view(\"sign_up\"))" in content
+        assert "from .sign_up import sign_up_view" in content
+        assert "\tapp.add_url_rule(\"/sign-up/\", view_func=sign_up_view)" in content
 
