@@ -13,7 +13,7 @@ import pathspec
 @click.command(help="Generate a new flask_boot app")
 @click.argument("name")
 def new(name):
-    print("Generating new app named: %s" % name)
+    click.echo("Generating new app named: %s" % name)
     env = Environment(
         loader=PackageLoader("flask_boot", "template"), autoescape=select_autoescape()
     )
