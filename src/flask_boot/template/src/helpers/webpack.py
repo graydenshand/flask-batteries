@@ -1,5 +1,6 @@
 import requests
 from flask import current_app, url_for
+import subprocess
 
 def static_url_for(path):
 	if current_app.config['USE_WEBPACK_DEV_SERVER']:

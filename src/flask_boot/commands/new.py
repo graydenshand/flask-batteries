@@ -9,10 +9,13 @@ import click
 from pkg_resources import resource_filename
 import shutil
 import pathspec
+import importlib.resources
+
+PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV","venv")
 
 @click.command(help="Generate a new flask_boot app")
-@click.argument("name")
-def new(name):
+def new():
+    name = os.getcwd().split("/")[-1]
     click.echo("Generating new app named: %s" % name)
     env = Environment(
         loader=PackageLoader("flask_boot", "template"), autoescape=select_autoescape()
@@ -32,18 +35,17 @@ def new(name):
         return
 
     def set_env_vars(skip_check=False, **kwargs):
-        # Add an environment variable to venv/bin/activate
+        # Add environment variable to virtual env activation script
         if skip_check:
-            with open("venv/bin/activate", "a") as f:
+            with open(f"{PATH_TO_VENV}/bin/activate", "a") as f:
                 for key, val in kwargs.items():
                     f.write(f"export {key}={val}\n")
             return
         else:
-            with open("venv/bin/activate", "r") as f:
+            with open(f"{PATH_TO_VENV}/bin/activate", "r") as f:
                 # Get existing file content
                 body = f.read()
-
-            with open("venv/bin/activate", "w") as f:
+            with open(f"{PATH_TO_VENV}/bin/activate", "w") as f:
                 # If key is already specified, remove it
                 for key, val in kwargs.items():
                     regex = f"export {key}={val}\n"
@@ -51,10 +53,7 @@ def new(name):
                     f.write(body)
             return
 
-    # Create empty directory and set it as current working directory
-    os.mkdir(name)
-    os.chdir(name)
-
+    # Look at .gitignore to find files in template not to copy
     with open(resource_filename("flask_boot", "template/.gitignore"), 'r') as f:
         ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
     ignore_matches = list(ignore_spec.match_tree(resource_filename("flask_boot", "template")))
@@ -74,11 +73,11 @@ def new(name):
 
     # Initialize git repo
     subprocess.run(["git", "init", "--initial-branch=main"])
-    # Initialize virtual env
-    subprocess.run(["python3", "-m", "venv", "venv"])
-    ## Install requirements
-    requirements = ["flask", "pytest", "requests"]
-    subprocess.run([f"venv/bin/pip", "install"] + requirements)
+
+    # Install PyPI package dependencies
+    dependencies = ["flask", "pytest", "requests"]    
+    subprocess.run([f"{PATH_TO_VENV}/bin/pip", "install"] + dependencies)
+   
     ## Set default environment variables
     envs = {
         "FLASK_APP": "main.py",

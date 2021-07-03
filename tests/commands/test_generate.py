@@ -1,8 +1,8 @@
-from ..fixtures import client, app, cli
-from src.commands import generate
+from ..conf_tests import app, cli
+from flask_boot import generate
 import os
 
-def test_generate_route_creates_correct_files(cli):
+def test_generate_route_creates_correct_files(cli, app):
     cli.invoke(generate, ['route', 'sign_up'])
     assert os.path.exists("src/routes/sign_up.py")
     assert os.path.exists("src/templates/sign_up.html")

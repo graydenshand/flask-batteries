@@ -1,8 +1,8 @@
-from ..fixtures import client, app, route, cli
-from src.commands import destroy
+from ..conf_tests import app, route, cli
+from flask_boot import destroy
 import os
 
-def test_destroy_route_destroys_correct_files(cli, route):
+def test_destroy_route_destroys_correct_files(cli, route, app):
     cli.invoke(destroy, ['route', 'sign_up'])
     assert not os.path.exists("src/routes/sign_up.py")
     assert not os.path.exists("src/templates/sign_up.html")

@@ -15,7 +15,7 @@ class {camel_name}(MethodView):
         return render_template("{name}.html")
 
 {name}_view = {camel_name}.as_view("{name}")"""
-{% raw -%}
+
 view_template = \
 """{{% extends 'base.html' %}}
 
@@ -24,7 +24,6 @@ view_template = \
 <p>Edit <b><i>src/templates/{name}.html</i></b> to make changes to this page.</p>
 {{% endblock %}}
 """
-{%- endraw %}
 
 test_template = \
 """from ..fixtures import client, app

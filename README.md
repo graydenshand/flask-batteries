@@ -42,4 +42,5 @@ tox
 * Add an `--spa` option to the `new` command to set up a Node JS project and generate a "catch all" client blueprint for rendering a JS Single Page Application (SPA). Possibly integrate with `create-react-app` and/or Vue's hello world example.
 * Add a `--websocket` option to the `new` command to install `Flask-SocketIO` and use its event loop instead of standard flask server.
 * Add a `--skip-db` option to the `new` command to not install SQLAlchemy.
+* Implement a flexible uploads system that can be configured to work with multiple back ends
 * ...and more

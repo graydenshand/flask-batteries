@@ -1,5 +1,5 @@
 from flask_boot import new
-from .conf_tests import cli, app
+from ..conf_tests import cli, app
 import os
 from pkg_resources import resource_filename
 import re
@@ -7,11 +7,12 @@ import subprocess
 import pathspec
 
 def test_new_doesnt_fail(cli):
-    result = cli.invoke(new, "app")
+    result = cli.invoke(new)
     assert result.exit_code == 0
 
 
 def test_new_creates_all_resources_in_template_directory(cli, app):
+    print(os.getcwd())
     # Walk the app template and verify every file and directory was copied
     with open(resource_filename("flask_boot", "template/.gitignore"), 'r') as f:
         ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
