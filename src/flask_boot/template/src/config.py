@@ -1,6 +1,5 @@
 import os
 
-# --base_config--
 class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24))
     DEBUG = False
@@ -8,12 +7,10 @@ class Config(object):
     USE_WEBPACK_DEV_SERVER = False
 # --end base_config
 
-# --production_config--
 class ProductionConfig(Config):
     pass
 # --end production_config
 
-# --development_config--
 class DevelopmentConfig(Config):
     DEBUG = True
     # Add all files in ./src/assets directory to watched files list
@@ -28,7 +25,6 @@ class DevelopmentConfig(Config):
     os.environ["FLASK_RUN_EXTRA_FILES"] = ":".join(extra_files)
 # --end development_config
 
-# --testing_config--
 class TestingConfig(Config):
     TESTING = True
     ENV = "testing"

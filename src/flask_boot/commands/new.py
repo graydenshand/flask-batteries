@@ -77,6 +77,7 @@ def new():
     # Install PyPI package dependencies
     dependencies = ["flask", "pytest", "requests"]    
     subprocess.run([f"{PATH_TO_VENV}/bin/pip", "install"] + dependencies)
+    subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze > requirements.txt")
    
     ## Set default environment variables
     envs = {
