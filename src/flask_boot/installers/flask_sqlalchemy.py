@@ -11,7 +11,7 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     def install():
         # Install package from PyPI
         subprocess.run(f"{PATH_TO_VENV}/bin/pip install -q -q flask-sqlalchemy", shell=True)
-        click.secho("Installed PyPI package flask-sqlalchemy", fg="green")
+        click.secho("Installed PyPI package `flask-sqlalchemy`", fg="green")
         subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requriements.txt", fg="green")
 
@@ -107,6 +107,6 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
 
         # Uninstall package from PyPI
         subprocess.run(f"{PATH_TO_VENV}/bin/pip install -q -q flask-sqlalchemy", shell=True)
-        click.secho("Uninstalled PyPI package flask-sqlalchemy", fg="red")
+        click.secho("Uninstalled PyPI package `flask-sqlalchemy`", fg="red")
         subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="red")
