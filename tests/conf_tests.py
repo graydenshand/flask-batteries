@@ -2,7 +2,8 @@ import pytest
 from click.testing import CliRunner
 from flask_boot import new, generate
 import subprocess
-import os 
+import os
+
 
 @pytest.fixture
 def cli():
@@ -21,5 +22,5 @@ def app(cli):
 
 @pytest.fixture
 def route(cli):
-    cli.invoke(generate, ['route', 'sign_up'])
+    cli.invoke(generate, ["route", "sign_up"])
     return

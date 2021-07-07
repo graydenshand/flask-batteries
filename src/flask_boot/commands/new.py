@@ -11,7 +11,8 @@ import shutil
 import pathspec
 import importlib.resources
 
-PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV","venv")
+PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV", "venv")
+
 
 @click.command(help="Generate a new flask_boot app")
 def new():
@@ -31,7 +32,9 @@ def new():
                 f.write(render_template(filename, **params))
         else:
             # Copy image files directly
-            shutil.copyfile(resource_filename("flask_boot", f"template/{filename}"), filename)
+            shutil.copyfile(
+                resource_filename("flask_boot", f"template/{filename}"), filename
+            )
         return
 
     def set_env_vars(skip_check=False, **kwargs):
@@ -54,16 +57,18 @@ def new():
             return
 
     # Look at .gitignore to find files in template not to copy
-    with open(resource_filename("flask_boot", "template/.gitignore"), 'r') as f:
-        ignore_spec = pathspec.PathSpec.from_lines('gitwildmatch', f)
-    ignore_matches = list(ignore_spec.match_tree(resource_filename("flask_boot", "template")))
+    with open(resource_filename("flask_boot", "template/.gitignore"), "r") as f:
+        ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
+    ignore_matches = list(
+        ignore_spec.match_tree(resource_filename("flask_boot", "template"))
+    )
     # Walk the app template and copy every file and directory
     for dirpath, dirs, files in os.walk(resource_filename("flask_boot", "template")):
         pattern = r"template\/*(.*)"
         match = re.search(pattern, dirpath)
         path = match.group(1)
         for d in dirs:
-            if d != '__pycache__':
+            if d != "__pycache__":
                 resource = path + "/" + d if path else d
                 os.mkdir(resource)
         for f in files:
@@ -75,10 +80,11 @@ def new():
     subprocess.run(["git", "init", "--initial-branch=main"])
 
     # Install PyPI package dependencies
-    dependencies = ["flask", "pytest", "requests"]    
-    subprocess.run([f"{PATH_TO_VENV}/bin/pip", "install"] + dependencies)
-    subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze > requirements.txt")
-   
+    dependencies = ["flask", "pytest", "requests"]
+    subprocess.run(f"{PATH_TO_VENV}/bin/pip install -q -q " + " ".join(dependencies), shell=True)
+    open("requirements.txt", "w+").close()
+    subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze > requirements.txt", shell=True)
+
     ## Set default environment variables
     envs = {
         "FLASK_APP": "main.py",

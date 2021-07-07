@@ -1,4 +1,4 @@
-class FlaskExtInstaller():
+class FlaskExtInstaller:
     def install():
         raise NotImplementedError()
 
