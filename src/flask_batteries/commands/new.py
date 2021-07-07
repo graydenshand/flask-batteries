@@ -14,12 +14,13 @@ import importlib.resources
 PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV", "venv")
 
 
-@click.command(help="Generate a new flask_boot app")
+@click.command(help="Generate a new flask_batteries app")
 def new():
     name = os.getcwd().split("/")[-1]
     click.echo("Generating new app named: %s" % name)
     env = Environment(
-        loader=PackageLoader("flask_boot", "template"), autoescape=select_autoescape()
+        loader=PackageLoader("flask_batteries", "template"),
+        autoescape=select_autoescape(),
     )
 
     def render_template(filename, **params):
@@ -33,7 +34,7 @@ def new():
         else:
             # Copy image files directly
             shutil.copyfile(
-                resource_filename("flask_boot", f"template/{filename}"), filename
+                resource_filename("flask_batteries", f"template/{filename}"), filename
             )
         return
 
@@ -57,13 +58,15 @@ def new():
             return
 
     # Look at .gitignore to find files in template not to copy
-    with open(resource_filename("flask_boot", "template/.gitignore"), "r") as f:
+    with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
         ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
     ignore_matches = list(
-        ignore_spec.match_tree(resource_filename("flask_boot", "template"))
+        ignore_spec.match_tree(resource_filename("flask_batteries", "template"))
     )
     # Walk the app template and copy every file and directory
-    for dirpath, dirs, files in os.walk(resource_filename("flask_boot", "template")):
+    for dirpath, dirs, files in os.walk(
+        resource_filename("flask_batteries", "template")
+    ):
         pattern = r"template\/*(.*)"
         match = re.search(pattern, dirpath)
         path = match.group(1)
@@ -81,7 +84,9 @@ def new():
 
     # Install PyPI package dependencies
     dependencies = ["flask", "pytest", "requests"]
-    subprocess.run(f"{PATH_TO_VENV}/bin/pip install -q -q " + " ".join(dependencies), shell=True)
+    subprocess.run(
+        f"{PATH_TO_VENV}/bin/pip install -q -q " + " ".join(dependencies), shell=True
+    )
     open("requirements.txt", "w+").close()
     subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze > requirements.txt", shell=True)
 

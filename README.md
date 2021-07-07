@@ -1,6 +1,6 @@
 *\~work in progress\~*
 
-# Flask-Boot
+# Flask-Batteries
 
 An opinionated command line tool for bootstrapping Flask applications with less boiler-plate code.
 
@@ -12,19 +12,19 @@ This has not been deployed to PYPI yet, as it is still under active development.
 
 To install, clone the repo and install using pip 
 ```bash
-git clone git@github.com:graydenshand/flask_boot.git
-pip install ./flask_boot # path to source code
+git clone git@github.com:graydenshand/flask_batteries.git
+pip install ./flask_batteries # path to source code
 ```
 
 ## Usage
 Currently there are just two commands:
 ```bash
-flask_boot new <name>
-flask_boot destroy <name>
+flask_batteries new <name>
+flask_batteries destroy <name>
 ```
 The `new` command creates a Flask app in a new directory with the specified name.
 
-The `destroy` command will recursively erase a directory with the specified name. Be careful with this, as it will erase any directory you specify without checking to make sure it's actually a Flask-Boot project. 
+The `destroy` command will recursively erase a directory with the specified name. Be careful with this, as it will erase any directory you specify without checking to make sure it's actually a Flask-Batteries project. 
 
 ## Tests
 Tests are run with [tox](https://tox.readthedocs.io/en/latest/) against python 3.9. 

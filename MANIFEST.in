@@ -1,1 +1,1 @@
-recursive-include src/flask_boot *
+recursive-include src/flask_batteries *

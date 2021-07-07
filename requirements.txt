@@ -8,7 +8,6 @@ chardet==4.0.0
 click==8.0.1
 docutils==0.17.1
 Flask==2.0.1
--e git+git@github.com:graydenshand/flask_boot.git@b74a899bb24f371003e140f2cdb9a75fda5790c5#egg=flask_boot
 idna==2.10
 imagesize==1.2.0
 itsdangerous==2.0.1

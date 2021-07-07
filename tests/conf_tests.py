@@ -1,6 +1,6 @@
 import pytest
 from click.testing import CliRunner
-from flask_boot import new, generate
+from flask_batteries import new, generate
 import subprocess
 import os
 

@@ -27,13 +27,13 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
             i = 0
             while i < len(lines):
                 print(lines[i])
-                if lines[i] == "# --flask_boot_mark import_packages--":
+                if lines[i] == "# --flask_batteries_mark import_packages--":
                     lines.insert(i, "from flask_sqlalchemy import SQLAlchemy")
                     i += 1  # add an extra one to i
-                elif lines[i] == "# --flask_boot_mark init_extensions--":
+                elif lines[i] == "# --flask_batteries_mark init_extensions--":
                     lines.insert(i, "db = SQLAlchemy()")
                     i += 1  # add an extra one to i
-                elif lines[i] == "\t\t# --flask_boot_mark attach_extensions--":
+                elif lines[i] == "\t\t# --flask_batteries_mark attach_extensions--":
                     lines.insert(i, "\t\tdb.init_app(app)")
                     lines.insert(i + 1, "\t\tdb.create_all()")
                     break
@@ -56,7 +56,7 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
 
             i = 0
             while i < len(lines):
-                if lines[i] == "# --flask_boot_mark base_config--":
+                if lines[i] == "# --flask_batteries_mark base_config--":
                     lines.insert(
                         i, '\tSQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")'
                     )

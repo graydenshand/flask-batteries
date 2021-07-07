@@ -1,6 +1,6 @@
 from ..conf_tests import app, cli
-from flask_boot import install
-from flask_boot.installers import FlaskSQLAlchemyInstaller
+from flask_batteries import install
+from flask_batteries.installers import FlaskSQLAlchemyInstaller
 import os
 
 

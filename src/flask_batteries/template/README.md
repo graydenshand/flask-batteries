@@ -1,9 +1,9 @@
 {{ (name[0]|upper) + name[1:] }}
 
-Created by Flask-Boot
+Created by Flask-Batteries
 
 # Getting Started
-Flask-Boot uses Webpack, a NodeJS asset manager to build a minified bundle for static assets. 
+Flask-Batteries uses Webpack, a NodeJS asset manager to build a minified bundle for static assets. 
 
 You must have npm and npx installed before using. Check if you have them installed by calling:
 ```bash

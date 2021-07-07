@@ -1,5 +1,5 @@
 from ..conf_tests import app, route, cli
-from flask_boot import destroy
+from flask_batteries import destroy
 import os
 
 
