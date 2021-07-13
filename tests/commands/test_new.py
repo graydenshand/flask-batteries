@@ -22,15 +22,15 @@ def test_new_creates_all_resources_in_template_directory(cli, app):
     for dirpath, dirs, files in os.walk(
         resource_filename("flask_batteries", "template")
     ):
-        pattern = r"template\/*(.*)"
+        pattern = r"template[\/]*(.*)"
         match = re.search(pattern, dirpath)
         path = match.group(1)
         for d in dirs:
             if d != "__pycache__":
-                resource = path + "/" + d if path else d
+                resource = os.path.join(path, d) if path else d
                 assert os.path.exists(resource)
         for f in files:
-            resource = path + "/" + f if path else f
+            resource = os.path.join(path, f) if path else f
             if resource not in ignore_matches:
                 assert os.path.exists(resource)
 

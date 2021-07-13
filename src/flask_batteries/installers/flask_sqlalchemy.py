@@ -3,75 +3,83 @@ import click
 import os
 import subprocess
 import shutil
+from ..config import PATH_TO_VENV, TAB
 
-PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV", "venv")
+if os.name != "nt":
+    # Posix
+    pip = os.path.join(PATH_TO_VENV, "bin", "pip")
+else:
+    # Windows
+    pip = os.path.join(PATH_TO_VENV, "Scripts", "pip")
 
 
 class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     @staticmethod
     def install():
         # Install package from PyPI
-        subprocess.run(
-            f"{PATH_TO_VENV}/bin/pip install -q -q flask-sqlalchemy", shell=True
-        )
+
+        subprocess.run(f"{pip} install -q -q flask-sqlalchemy", shell=True)
         click.secho("Installed PyPI package `flask-sqlalchemy`", fg="green")
-        subprocess.run(
-            f"{PATH_TO_VENV}/bin/pip freeze -q -q > requirements.txt", shell=True
-        )
-        click.secho("Updated requriements.txt", fg="green")
+        subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
+        click.secho("Updated requirements.txt", fg="green")
 
         # Edit __init__.py
-        with open("src/__init__.py", "r+") as f:
+        with open(os.path.join("src", "__init__.py"), "r+") as f:
             lines = f.read().split("\n")
 
             i = 0
             while i < len(lines):
-                print(lines[i])
                 if lines[i] == "# --flask_batteries_mark import_packages--":
                     lines.insert(i, "from flask_sqlalchemy import SQLAlchemy")
                     i += 1  # add an extra one to i
                 elif lines[i] == "# --flask_batteries_mark init_extensions--":
                     lines.insert(i, "db = SQLAlchemy()")
                     i += 1  # add an extra one to i
-                elif lines[i] == "\t\t# --flask_batteries_mark attach_extensions--":
-                    lines.insert(i, "\t\tdb.init_app(app)")
-                    lines.insert(i + 1, "\t\tdb.create_all()")
+                elif (
+                    lines[i]
+                    == f"{TAB}{TAB}# --flask_batteries_mark attach_extensions--"
+                ):
+                    lines.insert(i, f"{TAB}{TAB}db.init_app(app)")
+                    lines.insert(i + 1, f"{TAB}{TAB}db.create_all()")
                     break
                 i += 1
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
-        click.secho("Updated src/__init__.py", fg="green")
+        click.secho(f"Updated {os.path.join('src', '__init__.py')}", fg="green")
 
         # Create a 'models' folder if one does not exist
-        if not os.path.exists("src/models"):
-            os.mkdir("src/models")
-            click.secho("Created src/models/", fg="green")
-            open("src/models/__init__.py", "w+").close()
-            click.secho("Created src/models/__init__.py", fg="green")
+        if not os.path.exists(os.path.join("src", "models")):
+            os.mkdir(os.path.join("src", "models"))
+            click.secho(f"Created {os.path.join('src', 'models')}", fg="green")
+            open(os.path.join("src", "models", "__init__.py"), "w+").close()
+            click.secho(
+                f"Created {os.path.join('src', 'models', '__init__.py')}", fg="green"
+            )
 
         # Edit config.py
-        with open("src/config.py", "r+") as f:
+        with open(os.path.join("src", "config.py"), "r+") as f:
             lines = f.read().split("\n")
 
             i = 0
             while i < len(lines):
                 if lines[i] == "# --flask_batteries_mark base_config--":
                     lines.insert(
-                        i, '\tSQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")'
+                        i,
+                        f'{TAB}SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")',
                     )
-                    lines.insert(i + 1, "\tSQLALCHEMY_TRACK_MODIFICATIONS = False")
+                    lines.insert(i + 1, f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False")
                     break
                 i += 1
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
-        click.secho("Updated src/config.py", fg="green")
+        click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="green")
 
     @staticmethod
     def uninstall():
         # Remove initialization from __init__.py and create_app() func
-        with open("src/__init__.py", "r+") as f:
+        with open(os.path.join("src", "__init__.py"), "r+") as f:
             lines = f.read().split("\n")
 
             i = 0
@@ -83,8 +91,8 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
                     del lines[i]
                     i -= 1  # keep cursor in same position
                 elif (
-                    lines[i] == "\t\tdb.init_app(app)"
-                    or lines[i] == "\t\tdb.create_all()"
+                    lines[i] == f"{TAB}{TAB}db.init_app(app)"
+                    or lines[i] == f"{TAB}{TAB}db.create_all()"
                 ):
                     del lines[i]
                     i -= 1  # keep cursor in same position
@@ -92,14 +100,14 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
-        click.secho("Updated src/__init__.py", fg="red")
+        click.secho(f"Updated {os.path.join('src', '__init__.py')}", fg="red")
         # Delete models folder
-        if os.path.exists("src/models"):
-            shutil.rmtree("src/models")
-            click.secho("Destroyed src/models/", fg="red")
+        if os.path.exists(os.path.join("src", "models")):
+            shutil.rmtree(os.path.join("src", "models"))
+            click.secho(f"Destroyed {os.path.join('src', 'models')}", fg="red")
 
         # Edit config.py
-        with open("src/config.py", "r+") as f:
+        with open(os.path.join("src", "config.py"), "r+") as f:
             lines = f.read().split("\n")
 
             i = 0
@@ -111,14 +119,10 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
-        click.secho("Updated src/config.py", fg="red")
+        click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="red")
 
         # Uninstall package from PyPI
-        subprocess.run(
-            f"{PATH_TO_VENV}/bin/pip install -q -q flask-sqlalchemy", shell=True
-        )
+        subprocess.run(f"{pip} install -q -q flask-sqlalchemy", shell=True)
         click.secho("Uninstalled PyPI package `flask-sqlalchemy`", fg="red")
-        subprocess.run(
-            f"{PATH_TO_VENV}/bin/pip freeze -q -q > requirements.txt", shell=True
-        )
+        subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="red")

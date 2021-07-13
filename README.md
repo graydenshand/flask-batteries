@@ -7,24 +7,39 @@ An opinionated command line tool for bootstrapping Flask applications with less 
 Inspired by Ruby on Rails.
 
 
-## Installing
-This has not been deployed to PYPI yet, as it is still under active development. 
-
-To install, clone the repo and install using pip 
-```bash
-git clone git@github.com:graydenshand/flask_batteries.git
-pip install ./flask_batteries # path to source code
-```
-
 ## Usage
-Currently there are just two commands:
-```bash
-flask_batteries new <name>
-flask_batteries destroy <name>
-```
-The `new` command creates a Flask app in a new directory with the specified name.
+This package adds a collection of command line utilites for modifying your Flask project.
 
-The `destroy` command will recursively erase a directory with the specified name. Be careful with this, as it will erase any directory you specify without checking to make sure it's actually a Flask-Batteries project. 
+It's recommended to install this package in an isolated virtual environment. The best way to start a new project is like this:
+
+Create a new directory to store your Flask project, and set it as your current working directory. 
+```bash
+mkdir app
+cd app
+```
+
+Create a new virtual environment named `venv`, and activate it. 
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install this package, and invoke the `flask new` command which creates a scaffold for you to build your app around. 
+```bash
+pip install flask-batteries
+flask new
+```
+
+Finally, re-activate the virtual environment (because the `flask new` command injects environment variables into your `venv/bin/activate` script), and run the app. 
+```bash
+source venv/bin/activate
+flask run
+```
+
+Open up https://127.0.0.1:5000/ in your browser and you should see your app running.
+
+
+### Commands
 
 ## Tests
 Tests are run with [tox](https://tox.readthedocs.io/en/latest/) against python 3.9. 

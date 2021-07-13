@@ -10,11 +10,10 @@ from pkg_resources import resource_filename
 import shutil
 import pathspec
 import importlib.resources
+from ..config import PATH_TO_VENV
 
-PATH_TO_VENV = os.environ.get("FLASK_BOOT_PATH_TO_VENV", "venv")
 
-
-@click.command(help="Generate a new flask_batteries app")
+@click.command(help="Generate a new Flask-Batteries app")
 def new():
     name = os.getcwd().split("/")[-1]
     click.echo("Generating new app named: %s" % name)
@@ -38,22 +37,34 @@ def new():
             )
         return
 
+    def env_var(key, val):
+        if os.name != "nt":
+            return f"export {key}={val}"
+        else:
+            return f"set {key}={val}"
+
     def set_env_vars(skip_check=False, **kwargs):
         # Add environment variable to virtual env activation script
+        if os.name != "nt":
+            # Posix
+            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
+        else:
+            # Windows
+            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
         if skip_check:
-            with open(f"{PATH_TO_VENV}/bin/activate", "a") as f:
+            with open(activate, "a") as f:
                 for key, val in kwargs.items():
-                    f.write(f"export {key}={val}\n")
+                    f.write(f"{env_var(key, val)}\n")
             return
         else:
-            with open(f"{PATH_TO_VENV}/bin/activate", "r") as f:
+            with open(activate, "r") as f:
                 # Get existing file content
                 body = f.read()
-            with open(f"{PATH_TO_VENV}/bin/activate", "w") as f:
+            with open(activate, "w") as f:
                 # If key is already specified, remove it
                 for key, val in kwargs.items():
-                    regex = f"export {key}={val}\n"
-                    body = re.sub(regex, "", body) + f"export {key}={val}\n"
+                    regex = f"{env_var(key, val)}\n"
+                    body = re.sub(regex, "", body) + f"{env_var(key, val)}\n"
                     f.write(body)
             return
 
@@ -67,15 +78,15 @@ def new():
     for dirpath, dirs, files in os.walk(
         resource_filename("flask_batteries", "template")
     ):
-        pattern = r"template\/*(.*)"
+        pattern = r"template[\/]*(.*)"
         match = re.search(pattern, dirpath)
         path = match.group(1)
         for d in dirs:
             if d != "__pycache__":
-                resource = path + "/" + d if path else d
+                resource = os.path.join(path, d) if path else d
                 os.mkdir(resource)
         for f in files:
-            resource = path + "/" + f if path else f
+            resource = os.path.join(path, f) if path else f
             if resource not in ignore_matches:
                 copy_template(resource, name=name)
 
@@ -83,12 +94,16 @@ def new():
     subprocess.run(["git", "init", "--initial-branch=main"])
 
     # Install PyPI package dependencies
+    if os.name != "nt":
+        # Posix
+        pip = os.path.join(PATH_TO_VENV, "bin", "pip")
+    else:
+        # Windows
+        pip = os.path.join(PATH_TO_VENV, "Scripts", "pip")
     dependencies = ["flask", "pytest", "requests"]
-    subprocess.run(
-        f"{PATH_TO_VENV}/bin/pip install -q -q " + " ".join(dependencies), shell=True
-    )
+    subprocess.run(f"{pip} install -q -q " + " ".join(dependencies), shell=True)
     open("requirements.txt", "w+").close()
-    subprocess.run(f"{PATH_TO_VENV}/bin/pip freeze > requirements.txt", shell=True)
+    subprocess.run(f"{pip} freeze > requirements.txt", shell=True)
 
     ## Set default environment variables
     envs = {
