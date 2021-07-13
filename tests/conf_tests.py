@@ -11,7 +11,7 @@ def cli():
     with runner.isolated_filesystem():
         os.mkdir("app")
         os.chdir("app")
-        subprocess.run("python3 -m venv venv", shell=True)
+        subprocess.run("python -m venv venv", shell=True)
         yield runner
 
 

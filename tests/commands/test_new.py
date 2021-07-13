@@ -27,15 +27,18 @@ def test_new_creates_all_resources_in_template_directory(cli, app):
         path = match.group(1)
         for d in dirs:
             if d != "__pycache__":
-                resource = os.path.join(path, d) if path else d
+                resource = os.path.join(path, d).lstrip("\\") if path else d
                 assert os.path.exists(resource)
         for f in files:
-            resource = os.path.join(path, f) if path else f
+            resource = os.path.join(path, f).lstrip("\\") if path else f
             if resource not in ignore_matches:
                 assert os.path.exists(resource)
 
 
 def test_generated_app_passes_all_generated_tests(cli, app):
     # Run the generated app's test suite and verify exit code is 0
-    run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)
+    if os.name != 'nt':
+        run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)
+    else:
+        run_tests = subprocess.run("venv\\Scripts\\activate && pytest", shell=True)
     assert run_tests.returncode == 0, run_tests.stdout

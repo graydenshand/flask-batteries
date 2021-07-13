@@ -15,7 +15,11 @@ from ..config import PATH_TO_VENV
 
 @click.command(help="Generate a new Flask-Batteries app")
 def new():
-    name = os.getcwd().split("/")[-1]
+    print('test')
+    if os.name != 'nt':
+        name = os.getcwd().split("/")[-1]
+    else:
+        name = os.getcwd().split("\\")[-1]
     click.echo("Generating new app named: %s" % name)
     env = Environment(
         loader=PackageLoader("flask_batteries", "template"),
@@ -23,11 +27,14 @@ def new():
     )
 
     def render_template(filename, **params):
+        filename = filename.replace("\\", "/")
         template = env.get_template(filename)
         return template.render(**params)
 
     def copy_template(filename, **params):
-        if "src/assets/images" not in filename:
+        pattern = r"src[\\/]+assets[\\/]+images"
+        match = re.match(pattern, filename)
+        if match is None:
             with open(filename, "w+") as f:
                 f.write(render_template(filename, **params))
         else:
@@ -69,12 +76,14 @@ def new():
             return
 
     # Look at .gitignore to find files in template not to copy
+    print("Opening .gitignore")
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
         ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
     ignore_matches = list(
         ignore_spec.match_tree(resource_filename("flask_batteries", "template"))
     )
     # Walk the app template and copy every file and directory
+    print("Copying template")
     for dirpath, dirs, files in os.walk(
         resource_filename("flask_batteries", "template")
     ):
@@ -83,10 +92,12 @@ def new():
         path = match.group(1)
         for d in dirs:
             if d != "__pycache__":
-                resource = os.path.join(path, d) if path else d
+                resource = os.path.join(path, d).lstrip("\\") if path else d
+                print("Creating", resource)
                 os.mkdir(resource)
         for f in files:
-            resource = os.path.join(path, f) if path else f
+            resource = os.path.join(path, f).lstrip("\\") if path else f
+            print("Copying", resource)
             if resource not in ignore_matches:
                 copy_template(resource, name=name)
 
