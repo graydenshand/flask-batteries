@@ -14,9 +14,9 @@ from ..config import PATH_TO_VENV
 
 
 @click.command(help="Generate a new Flask-Batteries app")
-@click.option('--path-to-venv',default="venv")
+@click.option("--path-to-venv", default="venv")
 def new(path_to_venv):
-    if os.name != 'nt':
+    if os.name != "nt":
         name = os.getcwd().split("/")[-1]
     else:
         name = os.getcwd().split("\\")[-1]

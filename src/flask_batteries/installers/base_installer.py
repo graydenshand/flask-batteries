@@ -1,6 +1,8 @@
 import click
 import os
 import subprocess
+import re
+import sys
 from ..config import PATH_TO_VENV, TAB
 
 if os.name != "nt":
@@ -9,6 +11,7 @@ if os.name != "nt":
 else:
     # Windows
     pip = os.path.join(PATH_TO_VENV, "Scripts", "pip")
+
 
 class FlaskExtInstaller:
     package_name = None
@@ -19,13 +22,26 @@ class FlaskExtInstaller:
     production_config = []
     development_config = []
     testing_config = []
+    dependencies = []
+    pypi_dependencies = []
+    envs = {}
 
     @classmethod
     def install(cls):
         if cls.package_name is None:
             raise NotImplementedError()
+
+        # Prevent installing same package twice
+        if cls.verify():
+            click.secho(f"{cls.package_name} is already installed")
+            return
+
+        # Install any dependencies if not already installed
+        for dep in cls.dependencies:
+            dep.install()
+
         # Install package from PyPI
-        subprocess.run(f"{pip} install -q -q {cls.package_name}", shell=True)
+        subprocess.run(f"{pip} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
         click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
         subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="green")
@@ -50,7 +66,7 @@ class FlaskExtInstaller:
                 ):
                     for attachment in cls.attachments:
                         lines.insert(i, f"{TAB}{TAB}{attachment}")
-                        i+=1
+                        i += 1
                     break
                 i += 1
             f.seek(0)
@@ -86,13 +102,16 @@ class FlaskExtInstaller:
             f.write("\n".join(lines))
         click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="green")
 
+        # Add envs
+        cls.set_env_vars()
+
     @classmethod
     def uninstall(cls):
         if cls.package_name is None:
             raise NotImplementedError()
 
         # Uninstall package from PyPI
-        subprocess.run(f"{pip} uninstall -q -q {cls.package_name}", shell=True)
+        subprocess.run(f"{pip} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
         click.secho(f"Uninstalled PyPI package `{cls.package_name}`", fg="red")
         subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="red")
@@ -106,14 +125,14 @@ class FlaskExtInstaller:
                 if lines[i] == "# --flask_batteries_mark attach_extensions--":
                     break
                 elif (
-                        lines[i].lstrip(" ") in cls.imports
-                        or lines[i].lstrip(" ") in cls.inits
-                        or lines[i].lstrip(" ") in cls.attachments
-                    ):
-                        del lines[i]
-                        i -= 1
+                    lines[i].lstrip(" ") in cls.imports
+                    or lines[i].lstrip(" ") in cls.inits
+                    or lines[i].lstrip(" ") in cls.attachments
+                ):
+                    del lines[i]
+                    i -= 1
                 i += 1
-                
+
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
@@ -140,3 +159,156 @@ class FlaskExtInstaller:
             f.truncate()
             f.write("\n".join(lines))
         click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="red")
+
+        # Remove env vars
+        cls.rm_env_vars()
+
+    @classmethod
+    def verify(cls, verbose=False):
+        if cls.package_name is None:
+            raise NotImplementedError()
+
+        for dep in cls.dependencies:
+            if not dep.verify():
+                if verbose:
+                    click.secho(
+                        f"Package Verification Error: {cls.package_name} is missing depencency -- {dep}"
+                    )
+                return False
+
+        # Verify package is istalled from PyPI
+        reqs = subprocess.check_output(f"{pip} freeze -q -q", shell=True)
+        installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
+        if cls.package_name not in installed_packages:
+            if verbose:
+                click.secho(
+                    f"Package Verification Error: {cls.package_name} not found in package manager",
+                    fg="red",
+                )
+            return False
+        if verbose:
+            click.secho("Verified PyPI installation", fg="green")
+
+        # Remove initialization from __init__.py and create_app() func
+        with open(os.path.join("src", "__init__.py"), "r+") as f:
+            lines = f.read().split("\n")
+
+            i = 0
+            counter = 0
+            while i < len(lines):
+                if lines[i] == "# --flask_batteries_mark attach_extensions--":
+                    break
+                elif (
+                    lines[i].lstrip(" ") in cls.imports
+                    or lines[i].lstrip(" ") in cls.inits
+                    or lines[i].lstrip(" ") in cls.attachments
+                ):
+                    counter += 1
+                i += 1
+            if counter != len(cls.imports) + len(cls.inits) + len(cls.attachments):
+                if verbose:
+                    click.secho(
+                        f"Package Verification Error: {cls.package_name} __init__.py missing expected lines",
+                        fg="red",
+                    )
+                return False
+        if verbose:
+            click.secho(f"Verified {os.path.join('src', '__init__.py')}", fg="green")
+
+        # Edit config.py
+        with open(os.path.join("src", "config.py"), "r+") as f:
+            lines = f.read().split("\n")
+
+            i = 0
+            counter = 0
+            while i < len(lines):
+                if lines[i] == "# --flask_batteries_mark testing_config--":
+                    break
+                elif (
+                    lines[i].lstrip(" ") in cls.base_config
+                    or lines[i].lstrip(" ") in cls.production_config
+                    or lines[i].lstrip(" ") in cls.development_config
+                    or lines[i].lstrip(" ") in cls.testing_config
+                ):
+                    counter += 1
+                i += 1
+            if counter != len(cls.base_config) + len(cls.production_config) + len(
+                cls.development_config
+            ) + len(cls.testing_config):
+                if verbose:
+                    click.secho(
+                        f"Package Verification Error: {cls.package_name} config.py missing expected lines",
+                        fg="red",
+                    )
+                return False
+            if verbose:
+                click.secho(f"Verified {os.path.join('src', 'config.py')}", fg="green")
+
+        # Verify ENVS
+        if os.name != "nt":
+            # Posix
+            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
+        else:
+            # Windows
+            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
+
+        with open(activate, "r") as f:
+            body = f.read()
+            for k,v in cls.envs.items():
+                if f"{cls.env_var(k,v)}\n" not in body:
+                    if verbose:
+                        click.secho(f"Package Verification Error: {cls.package_name} env variables missing from {activate}")
+                    return False
+        return True
+
+    @staticmethod
+    def env_var(key, val):
+        if os.name != "nt":
+            return f"export {key}={val}"
+        else:
+            return f"set {key}={val}"
+
+    @classmethod
+    def set_env_vars(cls, skip_check=False):
+        # Add environment variable to virtual env activation script
+        if os.name != "nt":
+            # Posix
+            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
+        else:
+            # Windows
+            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
+        if skip_check:
+            with open(activate, "a") as f:
+                for key, val in cls.envs.items():
+                    f.write(f"{env_var(key, val)}\n")
+            return
+        else:
+            with open(activate, "r+") as f:
+                # Get existing file content
+                body = f.read()
+            with open(activate, "w") as f:
+                # If key is already specified, remove it
+                for key, val in cls.envs.items():
+                    pattern = f"{cls.env_var(key, val)}\n"
+                    body = re.sub(pattern, "", body)
+                    body += f"{cls.env_var(key, val)}\n"
+                f.write(body)
+            return
+
+    @classmethod
+    def rm_env_vars(cls):
+        # Remove environment variables from virtual env activaation script
+        if os.name != "nt":
+            # Posix
+            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
+        else:
+            # Windows
+            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
+        with open(activate, "r+") as f:
+            body = f.read()
+            for key, val in cls.envs.items():
+                pattern = f"{cls.env_var(key, val)}\n"
+                body = re.sub(pattern, "", body)
+            f.seek(0)
+            f.truncate()
+            f.write(body)

@@ -2,13 +2,28 @@ from .base_installer import FlaskExtInstaller
 import click
 import os
 import shutil
+from sqlalchemy_utils import create_database, database_exists
+
+
 
 class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
-    package_name = "flask-sqlalchemy"
+    package_name = "Flask-SQLAlchemy"
+    pypi_dependencies = ["psycopg2", "sqlalchemy-utils"]
     imports = ["from flask_sqlalchemy import SQLAlchemy"]
     inits = ["db = SQLAlchemy()"]
     attachments = ["db.init_app(app)", "db.create_all()"]
-    base_config = ["SQLALCHEMY_DATABASE_URI=os.environ.get(\"DATABASE_URL\")", "SQLALCHEMY_TRACK_MODIFICATIONS = False"]
+    base_config = [
+        'SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")',
+        "SQLALCHEMY_TRACK_MODIFICATIONS = False",
+    ]
+    
+    if os.name != 'nt':
+        name = os.getcwd().split("/")[-1]
+    else:
+        name = os.getcwd().split("\\")[-1]
+    envs = {
+        "DATABASE_URL": f"postgresql://localhost:5432/{name}"
+    }
 
     @classmethod
     def install(cls):
@@ -22,6 +37,10 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
                 f"Created {os.path.join('src', 'models', '__init__.py')}", fg="green"
             )
 
+        # Set up a database if needed
+        if not database_exists(cls.envs['DATABASE_URL']):
+            create_database(cls.envs['DATABASE_URL'])
+
     @classmethod
     def uninstall(cls):
         super().uninstall()
@@ -29,3 +48,17 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
         if os.path.exists(os.path.join("src", "models")):
             shutil.rmtree(os.path.join("src", "models"))
             click.secho(f"Destroyed {os.path.join('src', 'models')}", fg="red")
+
+    @classmethod
+    def verify(cls, verbose=False):
+        if not os.path.exists(os.path.join("src", "models")) or not os.path.exists(
+            os.path.join("src", "models", "__init__.py")
+        ):
+            if verbose:
+                click.secho(
+                    f"Package Verification Error: Flask-SQLAlchemy `models` directory doesn't exist",
+                    fg="red",
+                )
+            return False
+        else:
+            return super().verify()

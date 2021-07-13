@@ -38,7 +38,7 @@ def test_new_creates_all_resources_in_template_directory(cli, app):
 
 def test_generated_app_passes_all_generated_tests(cli, app):
     # Run the generated app's test suite and verify exit code is 0
-    if os.name != 'nt':
+    if os.name != "nt":
         run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)
     else:
         run_tests = subprocess.run("venv\\Scripts\\activate && pytest", shell=True)
@@ -51,7 +51,5 @@ def test_new_with_path_to_venv_option_doesnt_fail():
         os.mkdir("app")
         os.chdir("app")
         subprocess.run("python -m venv .venv", shell=True)
-        result = runner.invoke(new, ['--path-to-venv',".venv"])
+        result = runner.invoke(new, ["--path-to-venv", ".venv"])
         assert result.exit_code == 0
-
-        
