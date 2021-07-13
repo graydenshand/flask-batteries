@@ -76,14 +76,12 @@ def new(path_to_venv):
             return
 
     # Look at .gitignore to find files in template not to copy
-    print("Opening .gitignore")
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
         ignore_spec = pathspec.PathSpec.from_lines("gitwildmatch", f)
     ignore_matches = list(
         ignore_spec.match_tree(resource_filename("flask_batteries", "template"))
     )
     # Walk the app template and copy every file and directory
-    print("Copying template")
     for dirpath, dirs, files in os.walk(
         resource_filename("flask_batteries", "template")
     ):
@@ -93,11 +91,9 @@ def new(path_to_venv):
         for d in dirs:
             if d != "__pycache__":
                 resource = os.path.join(path, d).lstrip("\\") if path else d
-                print("Creating", resource)
                 os.mkdir(resource)
         for f in files:
             resource = os.path.join(path, f).lstrip("\\") if path else f
-            print("Copying", resource)
             if resource not in ignore_matches:
                 copy_template(resource, name=name)
 

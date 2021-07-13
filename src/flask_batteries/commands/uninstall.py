@@ -9,8 +9,7 @@ from ..installers import installers
 def uninstall(package):
     # Warn user and confirm deletion
     click.confirm(
-        "WARNING: You are about to erase the contents of your `models` directory.\n"
-        "Please confirm you would like to uninstall Flask-SQLAlchemy.",
+        f"You're about to uninstall flask-{package}. Continue?",
         abort=True,
     )
     click.echo(f"Uninstalling flask-{package}")
