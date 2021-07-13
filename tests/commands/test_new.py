@@ -1,4 +1,5 @@
 from flask_batteries import new
+from click.testing import CliRunner
 from ..conf_tests import cli, app
 import os
 from pkg_resources import resource_filename
@@ -42,3 +43,15 @@ def test_generated_app_passes_all_generated_tests(cli, app):
     else:
         run_tests = subprocess.run("venv\\Scripts\\activate && pytest", shell=True)
     assert run_tests.returncode == 0, run_tests.stdout
+
+
+def test_new_with_path_to_venv_option_doesnt_fail():
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        os.mkdir("app")
+        os.chdir("app")
+        subprocess.run("python -m venv .venv", shell=True)
+        result = runner.invoke(new, ['--path-to-venv',".venv"])
+        assert result.exit_code == 0
+
+        

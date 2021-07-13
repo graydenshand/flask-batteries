@@ -14,8 +14,8 @@ from ..config import PATH_TO_VENV
 
 
 @click.command(help="Generate a new Flask-Batteries app")
-def new():
-    print('test')
+@click.option('--path-to-venv',default="venv")
+def new(path_to_venv):
     if os.name != 'nt':
         name = os.getcwd().split("/")[-1]
     else:
@@ -54,10 +54,10 @@ def new():
         # Add environment variable to virtual env activation script
         if os.name != "nt":
             # Posix
-            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
+            activate = os.path.join(path_to_venv, "bin", "activate")
         else:
             # Windows
-            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
+            activate = os.path.join(path_to_venv, "Scripts", "activate.bat")
         if skip_check:
             with open(activate, "a") as f:
                 for key, val in kwargs.items():
@@ -107,10 +107,10 @@ def new():
     # Install PyPI package dependencies
     if os.name != "nt":
         # Posix
-        pip = os.path.join(PATH_TO_VENV, "bin", "pip")
+        pip = os.path.join(path_to_venv, "bin", "pip")
     else:
         # Windows
-        pip = os.path.join(PATH_TO_VENV, "Scripts", "pip")
+        pip = os.path.join(path_to_venv, "Scripts", "pip")
     dependencies = ["flask", "pytest", "requests"]
     subprocess.run(f"{pip} install -q -q " + " ".join(dependencies), shell=True)
     open("requirements.txt", "w+").close()
@@ -121,5 +121,6 @@ def new():
         "FLASK_APP": "main.py",
         "FLASK_ENV": "development",
         "SECRET_KEY": os.urandom(24).hex(),
+        "PATH_TO_VENV": path_to_venv,
     }
     set_env_vars(skip_check=True, **envs)
