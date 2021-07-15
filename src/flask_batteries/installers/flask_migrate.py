@@ -4,7 +4,8 @@ import subprocess
 import shutil
 import click
 import os
-
+from ..config import PATH_TO_VENV
+from ..helpers import activate
 
 class FlaskMigrateInstaller(FlaskExtInstaller):
     package_name = "Flask-Migrate"
@@ -16,7 +17,11 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
     @classmethod
     def install(cls):
         super().install()
-        subprocess.run("source venv/bin/activate && flask db init", shell=True)
+        path_to_venv = os.environ.get("PATH_TO_VENV", "venv")
+        if os.name != 'nt':
+            subprocess.run(f"source {activate()} && flask db init", shell=True)
+        else:
+            subprocess.run(f"{path_to_venv}\\Scripts\\activate && flask db init", shell=True)
         click.secho("Initialized migrations directory at `src/migrations`", fg="green")
 
     @classmethod

@@ -4,13 +4,9 @@ import subprocess
 import re
 import sys
 from ..config import PATH_TO_VENV, TAB
+from ..helpers import pip, activate
 
-if os.name != "nt":
-    # Posix
-    pip = os.path.join(PATH_TO_VENV, "bin", "pip")
-else:
-    # Windows
-    pip = os.path.join(PATH_TO_VENV, "Scripts", "pip")
+
 
 
 class FlaskExtInstaller:
@@ -41,9 +37,9 @@ class FlaskExtInstaller:
             dep.install()
 
         # Install package from PyPI
-        subprocess.run(f"{pip} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
+        subprocess.run(f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
         click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
-        subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
+        subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="green")
 
         # Edit __init__.py
@@ -245,14 +241,7 @@ class FlaskExtInstaller:
                 click.secho(f"Verified {os.path.join('src', 'config.py')}", fg="green")
 
         # Verify ENVS
-        if os.name != "nt":
-            # Posix
-            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
-        else:
-            # Windows
-            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
-
-        with open(activate, "r") as f:
+        with open(activate(), "r") as f:
             body = f.read()
             for k,v in cls.envs.items():
                 if f"{cls.env_var(k,v)}\n" not in body:
@@ -271,22 +260,16 @@ class FlaskExtInstaller:
     @classmethod
     def set_env_vars(cls, skip_check=False):
         # Add environment variable to virtual env activation script
-        if os.name != "nt":
-            # Posix
-            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
-        else:
-            # Windows
-            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
         if skip_check:
-            with open(activate, "a") as f:
+            with open(activate(), "a") as f:
                 for key, val in cls.envs.items():
                     f.write(f"{env_var(key, val)}\n")
             return
         else:
-            with open(activate, "r+") as f:
+            with open(activate(), "r+") as f:
                 # Get existing file content
                 body = f.read()
-            with open(activate, "w") as f:
+            with open(activate(), "w") as f:
                 # If key is already specified, remove it
                 for key, val in cls.envs.items():
                     pattern = f"{cls.env_var(key, val)}\n"
@@ -298,13 +281,7 @@ class FlaskExtInstaller:
     @classmethod
     def rm_env_vars(cls):
         # Remove environment variables from virtual env activaation script
-        if os.name != "nt":
-            # Posix
-            activate = os.path.join(PATH_TO_VENV, "bin", "activate")
-        else:
-            # Windows
-            activate = os.path.join(PATH_TO_VENV, "Scripts", "activate.bat")
-        with open(activate, "r+") as f:
+        with open(activate(), "r+") as f:
             body = f.read()
             for key, val in cls.envs.items():
                 pattern = f"{cls.env_var(key, val)}\n"

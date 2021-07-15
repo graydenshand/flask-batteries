@@ -11,6 +11,7 @@ import shutil
 import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV
+from ..installers import FlaskMigrateInstaller
 
 
 @click.command(help="Generate a new Flask-Batteries app")
@@ -20,6 +21,7 @@ def new(path_to_venv):
         name = os.getcwd().split("/")[-1]
     else:
         name = os.getcwd().split("\\")[-1]
+    os.environ["PATH_TO_VENV"] = path_to_venv
     click.echo("Generating new app named: %s" % name)
     env = Environment(
         loader=PackageLoader("flask_batteries", "template"),
@@ -120,3 +122,6 @@ def new(path_to_venv):
         "PATH_TO_VENV": path_to_venv,
     }
     set_env_vars(skip_check=True, **envs)
+
+    # Install Flask-Migrate and Flask-SQLAlchemy
+    FlaskMigrateInstaller.install()

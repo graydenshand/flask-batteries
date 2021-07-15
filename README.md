@@ -50,9 +50,26 @@ tox
 ```
 
 ## Roadmap
-* Finish building the basic template. Add SQLAlchemy (Flask-SQLAlchemy) + Alembic (Flask-Migrate). 
-* Extend Flask's CLI with a set of commands for quickly generating and destroying assets. E.g. `flask g route login` might generate a view function, map it to a url, generate a template, and generate a test.
-* Add an `install` command for installing common flask extensions.
+### V1
+Commands to add:
+* `flask generate model`: generate a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
+* `flask generate form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
+* `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
+* `flask install uploads`: install Flask-Uploads
+* `flask install babel`: install Flask-Babel
+* `flask install login`: install Flask-Login
+* `flask install mail`: install Flask-Mail
+* `flask install talisman`: install Flask-Talisman
+* `flask isntall cors`: install Flask-CORS
+* `flask install security`: install Flask-Security
+* `flask install restful`: install Flask-Restful
+
+Wrap `flask build` and `flask watch` commands in a `flask webpack [COMMAND]` command group. 
+
+Allow skipping of webpack, and using a simple 'static' folder. 
+
+
+
 * Add an `--api` option to the `new` command to install `Flask-Restful` and `Marshmallow` and generate a blueprint for API resources.
 * Add an `--spa` option to the `new` command to set up a Node JS project and generate a "catch all" client blueprint for rendering a JS Single Page Application (SPA). Possibly integrate with `create-react-app` and/or Vue's hello world example.
 * Add a `--websocket` option to the `new` command to install `Flask-SocketIO` and use its event loop instead of standard flask server.

@@ -1,2 +1,2 @@
 # Register commands
-from .commands import build, destroy, generate, install, new, uninstall, watch
+from .commands import destroy, generate, install, new, uninstall, webpack
