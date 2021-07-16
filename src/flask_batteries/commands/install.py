@@ -1,13 +1,33 @@
 import click
-from ..installers import installers
+from ..installers import *
 
+@click.group(help="Install a flask extension")
+def install():
+    pass
 
 @click.command(
-    help="Install a flask extension. E.g. `flask install sqlalchemy` for Flask-SQLAlchemy"
+    help="Install Flask-SQLAlchemy"
 )
-@click.argument("package")
-def install(package):
-    click.echo(f"Installing flask-{package}")
-    installer = installers[package]
-    installer.install()
+def sqlalchemy():
+    click.echo("Installing Flask-SQLAlchemy")
+    FlaskSQLAlchemyInstaller.install()
     click.echo("Done")
+install.add_command(sqlalchemy)
+
+@click.command(
+    help="Install Flask-SQLAlchemy"
+)
+def migrate():
+    click.echo("Installing Flask-Migrate")
+    FlaskMigrateInstaller.install()
+    click.echo("Done")
+install.add_command(migrate)
+
+@click.command(
+    help="Install Flask-WTF"
+)
+def wtf():
+    click.echo("Installing Flask-WTF")
+    FlaskWTFInstaller.install()
+    click.echo("Done")
+install.add_command(wtf)

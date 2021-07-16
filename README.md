@@ -52,27 +52,23 @@ tox
 ## Roadmap
 ### V1
 Commands to add:
-* `flask generate model`: generate a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
-* `flask generate form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
-* `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
-* `flask install uploads`: install Flask-Uploads
-* `flask install babel`: install Flask-Babel
-* `flask install login`: install Flask-Login
-* `flask install mail`: install Flask-Mail
-* `flask install talisman`: install Flask-Talisman
-* `flask isntall cors`: install Flask-CORS
-* `flask install security`: install Flask-Security
-* `flask install restful`: install Flask-Restful
+* ✅ `flask new`: generate a new Flask-Batteries app
+* ✅ `flask webpack build`: build static assets with Webpack
+* ✅ `flask webpack watch`: build and watch static assets with Webpack
+* ✅ `flask (un)install sqlalchemy`: (un)install Flask-SQLAlchemy
+* ✅ `flask (un)install migrate`: (un)install Flask-Migrate
+* ✅ `flask (un)install wtf`: (un)install Flask-WTF
+* ❌ `flask (un)install uploads`: (un)install Flask-Uploads
+* ❌ `flask (un)install babel`: (un)install Flask-Babel
+* ❌ `flask (un)install login`: (un)install Flask-Login
+* ❌ `flask (un)install mail`: (un)install Flask-Mail
+* ❌ `flask (un)install talisman`: (un)install Flask-Talisman
+* ❌ `flask (un)install cors`: (un)install Flask-CORS
+* ❌ `flask (un)install security`: (un)install Flask-Security
+* ❌ `flask (un)install restful`: (un)install Flask-Restful
+* ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
+* ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
+* ❌ `flask generate form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
+* ❌ `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
 
-Wrap `flask build` and `flask watch` commands in a `flask webpack [COMMAND]` command group. 
-
-Allow skipping of webpack, and using a simple 'static' folder. 
-
-
-
-* Add an `--api` option to the `new` command to install `Flask-Restful` and `Marshmallow` and generate a blueprint for API resources.
-* Add an `--spa` option to the `new` command to set up a Node JS project and generate a "catch all" client blueprint for rendering a JS Single Page Application (SPA). Possibly integrate with `create-react-app` and/or Vue's hello world example.
-* Add a `--websocket` option to the `new` command to install `Flask-SocketIO` and use its event loop instead of standard flask server.
-* Add a `--skip-db` option to the `new` command to not install SQLAlchemy.
-* Implement a flexible uploads system that can be configured to work with multiple back ends
-* ...and more
+* ❌ Allow skipping of webpack, and using a simple 'static' folder. 

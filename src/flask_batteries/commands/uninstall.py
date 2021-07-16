@@ -1,18 +1,33 @@
 import click
-from ..installers import installers
+from ..installers import *
 
+@click.group(help="Uninstall a flask extension")
+def uninstall():
+    pass
 
 @click.command(
-    help="Uninstall a flask extension. E.g. `flask uninstall sqlalchemy` for Flask-SQLAlchemy"
+    help="Uninstall Flask-SQLAlchemy"
 )
-@click.argument("package")
-def uninstall(package):
-    # Warn user and confirm deletion
-    click.confirm(
-        f"You're about to uninstall flask-{package}. Continue?",
-        abort=True,
-    )
-    click.echo(f"Uninstalling flask-{package}")
-    installer = installers[package]
-    installer.uninstall()
+def sqlalchemy():
+    click.echo("Uninstalling Flask-SQLAlchemy")
+    FlaskSQLAlchemyInstaller.uninstall()
     click.echo("Done")
+uninstall.add_command(sqlalchemy)
+
+@click.command(
+    help="Uninstall Flask-SQLAlchemy"
+)
+def migrate():
+    click.echo("Installing Flask-Migrate")
+    FlaskMigrateInstaller.uninstall()
+    click.echo("Done")
+uninstall.add_command(migrate)
+
+@click.command(
+    help="Uninstall Flask-WTF"
+)
+def wtf():
+    click.echo("Installing Flask-WTF")
+    FlaskWTFInstaller.uninstall()
+    click.echo("Done")
+uninstall.add_command(wtf)

@@ -1,5 +1,5 @@
 from ..conf_tests import app, cli
-from flask_batteries import install
+from flask_batteries import install, uninstall
 from flask_batteries.installers import FlaskMigrateInstaller
 import os
 from flask_batteries.config import TAB
@@ -9,7 +9,7 @@ def test_flask_migrate_installer(app, cli):
     assert FlaskMigrateInstaller.verify()
 
     # Call uninstall
-    FlaskMigrateInstaller.uninstall()
+    cli.invoke(uninstall, "migrate")
 
     # Check that models directory doesn't exist
     assert not os.path.exists(os.path.join("src", "migrations"))
@@ -25,7 +25,7 @@ def test_flask_migrate_installer(app, cli):
     assert not FlaskMigrateInstaller.verify()
 
     # Install the extension
-    FlaskMigrateInstaller.install()
+    cli.invoke(install, "migrate")
 
     # Check that migrations directory exists
     assert os.path.exists(os.path.join("src", "migrations"))

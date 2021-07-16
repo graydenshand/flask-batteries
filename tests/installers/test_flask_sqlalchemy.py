@@ -1,5 +1,5 @@
 from ..conf_tests import app, cli
-from flask_batteries import install
+from flask_batteries import install, uninstall
 from flask_batteries.installers import FlaskSQLAlchemyInstaller
 import os
 from flask_batteries.config import TAB
@@ -9,7 +9,7 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert FlaskSQLAlchemyInstaller.verify()
 
     # Call uninstall
-    FlaskSQLAlchemyInstaller.uninstall()
+    cli.invoke(uninstall, "sqlalchemy")
 
     # Check that models directory doesn't exist
     assert not os.path.exists(os.path.join("src", "models"))
@@ -34,7 +34,7 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert not FlaskSQLAlchemyInstaller.verify()
 
     # Install the extension
-    FlaskSQLAlchemyInstaller.install()
+    cli.invoke(install, "sqlalchemy")
 
     # Check that models directory exists
     assert os.path.exists(os.path.join("src", "models"))
