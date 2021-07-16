@@ -1,6 +1,7 @@
 import os
 from .config import PATH_TO_VENV, TAB
 
+
 def pip():
     """
     Return the path to the `pip` executable within a virtual environment.
@@ -12,6 +13,7 @@ def pip():
     else:
         # Windows
         return os.path.join(path_to_venv, "Scripts", "pip")
+
 
 def activate():
     """

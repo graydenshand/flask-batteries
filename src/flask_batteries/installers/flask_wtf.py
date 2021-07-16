@@ -4,6 +4,7 @@ import os
 import shutil
 from sqlalchemy_utils import create_database, database_exists
 
+
 class FlaskWTFInstaller(FlaskExtInstaller):
     package_name = "Flask-WTF"
 

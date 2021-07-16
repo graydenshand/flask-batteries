@@ -57,5 +57,3 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False" in content
 
     assert FlaskSQLAlchemyInstaller.verify()
-
-    

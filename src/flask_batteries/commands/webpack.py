@@ -6,13 +6,14 @@ import subprocess
 def webpack():
     pass
 
+
 @click.command(help="Compile static assets with Webpack")
 @click.option("--bail/--no-bail", default=False, help="Exit with error if build fails")
 def build(bail):
     """
     Compile static assets with Webpack
 
-    If --bail is passed, exit with an error code if compilation fails. 
+    If --bail is passed, exit with an error code if compilation fails.
     This is useful for CI tests.
     """
     if bail:
@@ -22,7 +23,9 @@ def build(bail):
     else:
         subprocess.run("npx webpack", shell=True)
 
+
 webpack.add_command(build)
+
 
 @click.command(help="Start Webpack dev server")
 def watch():
@@ -33,5 +36,5 @@ def watch():
     """
     subprocess.run("npx webpack serve", shell=True)
 
-webpack.add_command(watch)
 
+webpack.add_command(watch)

@@ -24,7 +24,6 @@ def test_flask_migrate_installer(app, cli):
 
     assert not FlaskMigrateInstaller.verify()
 
-
     # Install the extension
     FlaskMigrateInstaller.install()
 
@@ -40,5 +39,3 @@ def test_flask_migrate_installer(app, cli):
     assert f"{TAB}{TAB}migrate.init_app(app)" in content
 
     assert FlaskMigrateInstaller.verify()
-
-    

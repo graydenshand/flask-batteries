@@ -4,10 +4,11 @@ import os
 import shutil
 from sqlalchemy_utils import create_database, database_exists
 
-if os.name != 'nt':
+if os.name != "nt":
     name = os.getcwd().split("/")[-1]
 else:
     name = os.getcwd().split("\\")[-1]
+
 
 class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     package_name = "Flask-SQLAlchemy"
@@ -19,9 +20,7 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
         'SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")',
         "SQLALCHEMY_TRACK_MODIFICATIONS = False",
     ]
-    envs = {
-        "DATABASE_URL": f"postgresql://localhost:5432/{name}"
-    }
+    envs = {"DATABASE_URL": f"postgresql://localhost:5432/{name}"}
 
     @classmethod
     def install(cls):
@@ -44,8 +43,8 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
             )
 
         # Set up a database if needed
-        if not database_exists(cls.envs['DATABASE_URL']):
-            create_database(cls.envs['DATABASE_URL'])
+        if not database_exists(cls.envs["DATABASE_URL"]):
+            create_database(cls.envs["DATABASE_URL"])
 
     @classmethod
     def uninstall(cls):
@@ -62,7 +61,7 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     @classmethod
     def verify(cls, verbose=False):
         if (
-            not os.path.exists(os.path.join("src", "models")) 
+            not os.path.exists(os.path.join("src", "models"))
             or not os.path.exists(os.path.join("src", "models", "__init__.py"))
             or not os.path.exists(os.path.join("test", "models"))
             or not os.path.exists(os.path.join("test", "models", "__init__.py"))

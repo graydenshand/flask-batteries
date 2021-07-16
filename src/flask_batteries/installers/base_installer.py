@@ -7,8 +7,6 @@ from ..config import PATH_TO_VENV, TAB
 from ..helpers import pip, activate
 
 
-
-
 class FlaskExtInstaller:
     package_name = None
     imports = []
@@ -37,7 +35,10 @@ class FlaskExtInstaller:
             dep.install()
 
         # Install package from PyPI
-        subprocess.run(f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
+        subprocess.run(
+            f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}",
+            shell=True,
+        )
         click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
         subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="green")
@@ -76,19 +77,19 @@ class FlaskExtInstaller:
 
             i = 0
             while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark base_config--":
+                if lines[i] == f"{TAB}# --flask_batteries_mark base_config--":
                     for item in cls.base_config:
                         lines.insert(i, f"{TAB}{item}")
                         i += 1
-                elif lines[i] == "# --flask_batteries_mark production_config--":
+                elif lines[i] == f"{TAB}# --flask_batteries_mark production_config--":
                     for item in cls.production_config:
                         lines.insert(i, f"{TAB}{item}")
                         i += 1
-                elif lines[i] == "# --flask_batteries_mark development_config--":
+                elif lines[i] == f"{TAB}# --flask_batteries_mark development_config--":
                     for item in cls.development_config:
                         lines.insert(i, f"{TAB}{item}")
                         i += 1
-                elif lines[i] == "# --flask_batteries_mark testing_config--":
+                elif lines[i] == f"{TAB}# --flask_batteries_mark testing_config--":
                     for item in cls.testing_config:
                         lines.insert(i, f"{TAB}{item}")
                         i += 1
@@ -107,9 +108,12 @@ class FlaskExtInstaller:
             raise NotImplementedError()
 
         # Uninstall package from PyPI
-        subprocess.run(f"{pip} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}", shell=True)
+        subprocess.run(
+            f"{pip()} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}",
+            shell=True,
+        )
         click.secho(f"Uninstalled PyPI package `{cls.package_name}`", fg="red")
-        subprocess.run(f"{pip} freeze -q -q > requirements.txt", shell=True)
+        subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
         click.secho("Updated requirements.txt", fg="red")
 
         # Remove initialization from __init__.py and create_app() func
@@ -173,7 +177,7 @@ class FlaskExtInstaller:
                 return False
 
         # Verify package is istalled from PyPI
-        reqs = subprocess.check_output(f"{pip} freeze -q -q", shell=True)
+        reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
         installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
         if cls.package_name not in installed_packages:
             if verbose:
@@ -218,7 +222,7 @@ class FlaskExtInstaller:
             i = 0
             counter = 0
             while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark testing_config--":
+                if lines[i] == f"{TAB}# --flask_batteries_mark testing_config--":
                     break
                 elif (
                     lines[i].lstrip(" ") in cls.base_config
@@ -243,10 +247,12 @@ class FlaskExtInstaller:
         # Verify ENVS
         with open(activate(), "r") as f:
             body = f.read()
-            for k,v in cls.envs.items():
+            for k, v in cls.envs.items():
                 if f"{cls.env_var(k,v)}\n" not in body:
                     if verbose:
-                        click.secho(f"Package Verification Error: {cls.package_name} env variables missing from {activate}")
+                        click.secho(
+                            f"Package Verification Error: {cls.package_name} env variables missing from {activate}"
+                        )
                     return False
         return True
 

@@ -6,12 +6,12 @@ class Config:
     DEBUG = False
     TESTING = False
     USE_WEBPACK_DEV_SERVER = False
-# --flask_batteries_mark base_config--
+    # --flask_batteries_mark base_config--
 
 
 class ProductionConfig(Config):
     pass
-# --flask_batteries_mark production_config--
+    # --flask_batteries_mark production_config--
 
 
 class DevelopmentConfig(Config):
@@ -26,10 +26,10 @@ class DevelopmentConfig(Config):
                 if os.path.isfile(filename):
                     extra_files.append(filename)
     os.environ["FLASK_RUN_EXTRA_FILES"] = ":".join(extra_files)
-# --flask_batteries_mark development_config--
+    # --flask_batteries_mark development_config--
 
 
 class TestingConfig(Config):
     TESTING = True
     ENV = "testing"
-# --flask_batteries_mark testing_config--
+    # --flask_batteries_mark testing_config--
