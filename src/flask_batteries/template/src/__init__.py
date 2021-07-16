@@ -6,11 +6,9 @@ Modifying the contents of this file may result in Flask-Batteries producing unex
 from flask import Flask
 from .config import ProductionConfig
 from .routes import register_routes
-from .helpers import webpack_init
 import subprocess
 import requests
-from .helpers import static_url_for
-
+from flask_batteries import Batteries
 # --flask_batteries_mark import_packages--
 
 # --flask_batteries_mark init_extensions--
@@ -26,12 +24,9 @@ def create_app(config=ProductionConfig):
         # Register routes
         register_routes(app)
 
+        Batteries(app)
         # --flask_batteries_mark attach_extensions--
-
-        # Initialize webpack helpers
-        if app.config["ENV"] == "development":
-            webpack_init(app)
-
+        
         @app.shell_context_processor
         def inject_variables_into_shell_context():
             return {}
@@ -41,7 +36,6 @@ def create_app(config=ProductionConfig):
             return {
                 "application_name": "{{name}}",
                 "app": app,
-                "static_url_for": static_url_for,
             }
 
     return app

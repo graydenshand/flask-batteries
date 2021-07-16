@@ -6,6 +6,7 @@ import click
 import os
 from ..config import PATH_TO_VENV
 from ..helpers import activate
+import sys
 
 
 class FlaskMigrateInstaller(FlaskExtInstaller):
@@ -20,11 +21,14 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
         super().install()
         path_to_venv = os.environ.get("PATH_TO_VENV", "venv")
         if os.name != "nt":
-            subprocess.run(f"source {activate()} && flask db init", shell=True)
+            result = subprocess.run(f"source {activate()} && flask db init", shell=True)
         else:
-            subprocess.run(
+            result = subprocess.run(
                 f"{path_to_venv}\\Scripts\\activate && flask db init", shell=True
             )
+        if result.returncode != 0:
+            print(result.stderr, file=sys.stderr)
+            raise Exception("Unable to initalize Flask-Migrate")
         click.secho("Initialized migrations directory at `src/migrations`", fg="green")
 
     @classmethod

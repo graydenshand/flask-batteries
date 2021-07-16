@@ -1,2 +1,4 @@
 # Register commands
-from .commands import destroy, generate, install, new, uninstall, webpack
+from .commands import new
+
+from .flask_batteries import Batteries

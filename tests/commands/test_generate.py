@@ -1,5 +1,5 @@
 from ..conf_tests import app, cli
-from flask_batteries import generate
+from flask_batteries.commands import generate
 import os
 
 

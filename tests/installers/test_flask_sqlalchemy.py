@@ -1,5 +1,5 @@
 from ..conf_tests import app, cli
-from flask_batteries import install, uninstall
+from flask_batteries.commands import install, uninstall
 from flask_batteries.installers import FlaskSQLAlchemyInstaller
 import os
 from flask_batteries.config import TAB

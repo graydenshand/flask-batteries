@@ -1,4 +1,4 @@
-from flask_batteries import new
+from flask_batteries.commands import new
 from click.testing import CliRunner
 from ..conf_tests import cli, app
 import os
@@ -6,11 +6,12 @@ from pkg_resources import resource_filename
 import re
 import subprocess
 import pathspec
+import traceback
 
 
 def test_new_doesnt_fail(cli):
     result = cli.invoke(new)
-    assert result.exit_code == 0
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
 
 def test_new_creates_all_resources_in_template_directory(cli, app):
