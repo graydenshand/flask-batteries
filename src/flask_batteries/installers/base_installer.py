@@ -4,7 +4,7 @@ import subprocess
 import re
 import sys
 from ..config import PATH_TO_VENV, TAB
-from ..helpers import pip, activate
+from ..helpers import pip, activate, env_var, rm_env_vars, set_env_vars
 
 
 class FlaskExtInstaller:
@@ -100,7 +100,7 @@ class FlaskExtInstaller:
         click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="green")
 
         # Add envs
-        cls.set_env_vars()
+        set_env_vars(**cls.envs)
 
     @classmethod
     def uninstall(cls):
@@ -161,7 +161,7 @@ class FlaskExtInstaller:
         click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="red")
 
         # Remove env vars
-        cls.rm_env_vars()
+        rm_env_vars(**cls.envs)
 
     @classmethod
     def verify(cls, verbose=False):
@@ -248,7 +248,7 @@ class FlaskExtInstaller:
         with open(activate(), "r") as f:
             body = f.read()
             for k, v in cls.envs.items():
-                if f"{cls.env_var(k,v)}\n" not in body:
+                if f"{env_var(k,v)}\n" not in body:
                     if verbose:
                         click.secho(
                             f"Package Verification Error: {cls.package_name} env variables missing from {activate}"
@@ -256,42 +256,4 @@ class FlaskExtInstaller:
                     return False
         return True
 
-    @staticmethod
-    def env_var(key, val):
-        if os.name != "nt":
-            return f"export {key}={val}"
-        else:
-            return f"set {key}={val}"
-
-    @classmethod
-    def set_env_vars(cls, skip_check=False):
-        # Add environment variable to virtual env activation script
-        if skip_check:
-            with open(activate(), "a") as f:
-                for key, val in cls.envs.items():
-                    f.write(f"{env_var(key, val)}\n")
-            return
-        else:
-            with open(activate(), "r+") as f:
-                # Get existing file content
-                body = f.read()
-            with open(activate(), "w") as f:
-                # If key is already specified, remove it
-                for key, val in cls.envs.items():
-                    pattern = f"{cls.env_var(key, val)}\n"
-                    body = re.sub(pattern, "", body)
-                    body += f"{cls.env_var(key, val)}\n"
-                f.write(body)
-            return
-
-    @classmethod
-    def rm_env_vars(cls):
-        # Remove environment variables from virtual env activaation script
-        with open(activate(), "r+") as f:
-            body = f.read()
-            for key, val in cls.envs.items():
-                pattern = f"{cls.env_var(key, val)}\n"
-                body = re.sub(pattern, "", body)
-            f.seek(0)
-            f.truncate()
-            f.write(body)
+    

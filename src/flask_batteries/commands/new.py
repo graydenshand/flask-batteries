@@ -12,6 +12,7 @@ import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV
 from ..installers import FlaskMigrateInstaller
+from ..helpers import set_env_vars
 
 
 @click.command(help="Generate a new Flask-Batteries app")
@@ -45,37 +46,6 @@ def new(path_to_venv):
                 resource_filename("flask_batteries", f"template/{filename}"), filename
             )
         return
-
-    def env_var(key, val):
-        if os.name != "nt":
-            return f"export {key}={val}"
-        else:
-            return f"set {key}={val}"
-
-    def set_env_vars(skip_check=False, **kwargs):
-        # Add environment variable to virtual env activation script
-        if os.name != "nt":
-            # Posix
-            activate = os.path.join(path_to_venv, "bin", "activate")
-        else:
-            # Windows
-            activate = os.path.join(path_to_venv, "Scripts", "activate.bat")
-        if skip_check:
-            with open(activate, "a") as f:
-                for key, val in kwargs.items():
-                    f.write(f"{env_var(key, val)}\n")
-            return
-        else:
-            with open(activate, "r") as f:
-                # Get existing file content
-                body = f.read()
-            with open(activate, "w") as f:
-                # If key is already specified, remove it
-                for key, val in kwargs.items():
-                    regex = f"{env_var(key, val)}\n"
-                    body = re.sub(regex, "", body) + f"{env_var(key, val)}\n"
-                    f.write(body)
-            return
 
     # Look at .gitignore to find files in template not to copy
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
