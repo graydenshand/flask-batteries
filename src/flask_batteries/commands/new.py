@@ -25,7 +25,7 @@ def render_template(filename, **params):
     return template.render(**params)
 
 def copy_template(filename, **params):
-    pattern = r"src[\\/]+assets[\\/]+images"
+    pattern = r"src[\\/]+assets[\\/]+static"
     match = re.match(pattern, filename)
     if match is None:
         with open(filename, "w+") as f:

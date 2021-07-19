@@ -26,7 +26,7 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "assets/images", to: "images"}
+        { from: "assets/static", to: ""}
       ]
     }),
     new MiniCssExtractPlugin(),
