@@ -1,11 +1,25 @@
-{% raw -%}
-{% extends 'base.html' %}
+{% if not skip_webpack -%}
+	{% raw -%}
+	{% extends 'base.html' %}
+	{% block body %}
+	<main class="container">
+		<div>
+			<img src="{{ static_url_for('images/flask-logo.png') }}" alt="Flask Logo" />
+		</div>
+	</main>
+	{% endblock %}
+	{%- endraw %}
+{% else -%}
+	{% raw -%}
+	{% extends 'base.html' %}
+	{% block body %}
+	<main class="container">
+		<div>
+			<img src="{{ url_for('static', filename='images/flask-logo.png') }}" alt="Flask Logo" />
+		</div>
+	</main>
+	{% endblock %}
+	{%- endraw %}
+{%- endif %}
 
-{% block body %}
-<main class="container">
-	<div>
-		<img src="{{ static_url_for('images/flask-logo.png') }}" alt="Flask Logo" />
-	</div>
-</main>
-{% endblock %}
-{%- endraw %}
+

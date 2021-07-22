@@ -6,7 +6,7 @@ import os
 import shutil
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def cli():
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -14,11 +14,9 @@ def cli():
         os.chdir("app")
         subprocess.run("python -m venv venv", shell=True)
         yield runner
-        os.chdir("..")
-        shutil.rmtree("app")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def app(cli):
     cli.invoke(new)
 

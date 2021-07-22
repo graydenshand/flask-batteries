@@ -53,4 +53,25 @@ def test_new_with_path_to_venv_option_doesnt_fail():
         os.chdir("app")
         subprocess.run("python -m venv .venv", shell=True)
         result = runner.invoke(new, ["--path-to-venv", ".venv"])
-        assert result.exit_code == 0
+        assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
+
+def test_new_with_skip_webpack(cli):
+    result = cli.invoke(new, ["--skip-webpack"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+    assert not os.path.exists("webpack.config.js")
+    assert not os.path.exists(os.path.join("src", "assets"))
+    assert os.path.exists(os.path.join("src", "static", "images", "flask-logo.png"))
+    assert os.path.exists(os.path.join("src", "static", "images", "flask-icon.png"))
+    assert os.path.exists(os.path.join("src", "static", "stylesheets", "base.css"))
+    assert os.path.exists(os.path.join("src", "static", "javascript"))
+
+    with open(os.path.join("src", "config.py"), "r") as f:
+        content = f.read()
+        assert "FLASK_BATTERIES_USE_WEBPACK" in content
+
+    if os.name != "nt":
+        run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)
+    else:
+        run_tests = subprocess.run("venv\\Scripts\\activate && pytest", shell=True)
+    assert run_tests.returncode == 0, run_tests.stdout

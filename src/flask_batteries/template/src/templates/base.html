@@ -1,3 +1,4 @@
+{% if not skip_webpack -%}
 {% raw -%}
 <!DOCTYPE html>
 <html>
@@ -15,3 +16,21 @@
 </body>
 </html>
 {%- endraw %}
+{% else -%}
+{% raw -%}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Flask app</title>
+	<link rel="icon" type="text/css" href="{{ url_for('static', filename='images/flask-icon.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/base.css') }}">
+	{% block head %}{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+
+</body>
+</html>
+{%- endraw %}
+{%- endif %}

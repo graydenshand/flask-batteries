@@ -22,9 +22,6 @@ class FlaskExtInstaller:
 
     @classmethod
     def install(cls):
-        if cls.package_name is None:
-            raise NotImplementedError()
-
         # Prevent installing same package twice
         if cls.verify():
             click.secho(f"{cls.package_name} is already installed")
@@ -35,13 +32,14 @@ class FlaskExtInstaller:
             dep.install()
 
         # Install package from PyPI
-        subprocess.run(
-            f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}",
-            shell=True,
-        )
-        click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
-        subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
-        click.secho("Updated requirements.txt", fg="green")
+        if cls.package_name is not None:
+            subprocess.run(
+                f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}",
+                shell=True,
+            )
+            click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
+            subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
+            click.secho("Updated requirements.txt", fg="green")
 
         # Edit __init__.py
         with open(os.path.join("src", "__init__.py"), "r+") as f:
@@ -104,17 +102,15 @@ class FlaskExtInstaller:
 
     @classmethod
     def uninstall(cls):
-        if cls.package_name is None:
-            raise NotImplementedError()
-
-        # Uninstall package from PyPI
-        subprocess.run(
-            f"{pip()} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}",
-            shell=True,
-        )
-        click.secho(f"Uninstalled PyPI package `{cls.package_name}`", fg="red")
-        subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
-        click.secho("Updated requirements.txt", fg="red")
+        if cls.package_name is not None:
+            # Uninstall package from PyPI
+            subprocess.run(
+                f"{pip()} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}",
+                shell=True,
+            )
+            click.secho(f"Uninstalled PyPI package `{cls.package_name}`", fg="red")
+            subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
+            click.secho("Updated requirements.txt", fg="red")
 
         # Remove initialization from __init__.py and create_app() func
         with open(os.path.join("src", "__init__.py"), "r+") as f:
@@ -165,9 +161,6 @@ class FlaskExtInstaller:
 
     @classmethod
     def verify(cls, verbose=False):
-        if cls.package_name is None:
-            raise NotImplementedError()
-
         for dep in cls.dependencies:
             if not dep.verify():
                 if verbose:
@@ -177,17 +170,15 @@ class FlaskExtInstaller:
                 return False
 
         # Verify package is istalled from PyPI
-        reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
-        installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
-        if cls.package_name not in installed_packages:
+        if cls.package_name is not None:
+            reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
+            installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
+            if cls.package_name not in installed_packages:
+                if verbose:
+                    print(f"Package Verification Error: {cls.package_name} not found in package manager")
+                return False
             if verbose:
-                click.secho(
-                    f"Package Verification Error: {cls.package_name} not found in package manager",
-                    fg="red",
-                )
-            return False
-        if verbose:
-            click.secho("Verified PyPI installation", fg="green")
+                print("Verified PyPI installation")
 
         # Remove initialization from __init__.py and create_app() func
         with open(os.path.join("src", "__init__.py"), "r+") as f:
@@ -207,13 +198,10 @@ class FlaskExtInstaller:
                 i += 1
             if counter != len(cls.imports) + len(cls.inits) + len(cls.attachments):
                 if verbose:
-                    click.secho(
-                        f"Package Verification Error: {cls.package_name} __init__.py missing expected lines",
-                        fg="red",
-                    )
+                    print(f"Package Verification Error: {cls.package_name} __init__.py missing expected lines")
                 return False
         if verbose:
-            click.secho(f"Verified {os.path.join('src', '__init__.py')}", fg="green")
+            print(f"Verified {os.path.join('src', '__init__.py')}")
 
         # Edit config.py
         with open(os.path.join("src", "config.py"), "r+") as f:
@@ -236,13 +224,11 @@ class FlaskExtInstaller:
                 cls.development_config
             ) + len(cls.testing_config):
                 if verbose:
-                    click.secho(
-                        f"Package Verification Error: {cls.package_name} config.py missing expected lines",
-                        fg="red",
-                    )
+                    print(
+                        f"Package Verification Error: {cls.package_name} config.py missing expected lines")
                 return False
             if verbose:
-                click.secho(f"Verified {os.path.join('src', 'config.py')}", fg="green")
+                print(f"Verified {os.path.join('src', 'config.py')}")
 
         # Verify ENVS
         with open(activate(), "r") as f:
@@ -250,10 +236,11 @@ class FlaskExtInstaller:
             for k, v in cls.envs.items():
                 if f"{env_var(k,v)}\n" not in body:
                     if verbose:
-                        click.secho(
-                            f"Package Verification Error: {cls.package_name} env variables missing from {activate}"
-                        )
+                        print(f"Package Verification Error: {cls.package_name} env variables missing from {activate}")
                     return False
+            if verbose:
+                print(f"Verified environment variables")
         return True
+
 
     
