@@ -17,11 +17,11 @@ def build(bail):
     This is useful for CI tests.
     """
     if bail:
-        proc = subprocess.run("npx webpack --bail", shell=True)
+        proc = subprocess.run(["npx", "webpack", "--bail"])
         if proc.returncode != 0:
             exit(1)
     else:
-        subprocess.run("npx webpack", shell=True)
+        subprocess.run(["npx", "webpack"])
 
 
 webpack.add_command(build)
@@ -34,7 +34,7 @@ def watch():
 
     Compiles faster than the `build` command.
     """
-    subprocess.run("npx webpack serve", shell=True)
+    subprocess.run(["npx", "webpack", "serve"])
 
 
 webpack.add_command(watch)

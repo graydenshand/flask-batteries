@@ -1,10 +1,12 @@
 from ..conf_tests import app, route, cli
 from flask_batteries.commands import destroy
 import os
+import traceback
 
 
 def test_destroy_route_destroys_correct_files(cli, route, app):
-    cli.invoke(destroy, ["route", "sign_up"])
+    result = cli.invoke(destroy, ["route", "sign_up"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
     assert not os.path.exists("src/routes/sign_up.py")
     assert not os.path.exists("src/templates/sign_up.html")
     assert not os.path.exists("test/routes/test_sign_up.py")

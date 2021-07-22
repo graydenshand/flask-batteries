@@ -4,7 +4,6 @@ import subprocess
 import shutil
 import click
 import os
-from ..config import PATH_TO_VENV
 from ..helpers import activate
 import sys
 
@@ -21,10 +20,16 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
         super().install()
         path_to_venv = os.environ.get("PATH_TO_VENV", "venv")
         if os.name != "nt":
-            result = subprocess.run(f"source {activate()} && flask db init", shell=True)
+            result = subprocess.run(
+                f"source {activate()} && flask db init",
+                shell=True,
+                stdout=subprocess.DEVNULL,
+            )
         else:
             result = subprocess.run(
-                f"{path_to_venv}\\Scripts\\activate && flask db init", shell=True
+                f"{path_to_venv}\\Scripts\\activate && flask db init",
+                shell=True,
+                stdout=subprocess.DEVNULL,
             )
         if result.returncode != 0:
             print(result.stderr, file=sys.stderr)
@@ -34,7 +39,6 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
     def uninstall(cls):
         super().uninstall()
         if os.path.exists(os.path.join("src", "migrations")):
-            print("Removing src/migrations folder")
             shutil.rmtree(os.path.join("src", "migrations"))
 
     @classmethod

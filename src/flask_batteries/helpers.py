@@ -1,6 +1,9 @@
 import os
 from .config import PATH_TO_VENV, TAB
 import re
+from jinja2 import Environment, PackageLoader, select_autoescape
+from pkg_resources import resource_filename, get_distribution
+import shutil
 
 
 def pip():
@@ -186,6 +189,34 @@ def verify_file(filename, lines_to_verify=[]):
             return True
         else:
             return False
+
+
+env = Environment(
+    loader=PackageLoader("flask_batteries", "template"),
+    autoescape=select_autoescape(),
+)
+
+
+def render_template(filename, **params):
+    filename = filename.replace("\\", "/")
+    template = env.get_template(filename)
+    return template.render(**params)
+
+
+def copy_template(filename, target=None, **params):
+    if target is None:
+        target = filename
+    pattern = r"src[\\/]+assets[\\/]+static"
+    match = re.match(pattern, filename)
+    if match is None:
+        with open(target, "w+") as f:
+            f.write(render_template(filename, **params))
+    else:
+        # Copy image files directly
+        shutil.copyfile(
+            resource_filename("flask_batteries", f"template/{filename}"), target
+        )
+    return
 
 
 class FlaskBatteriesError(Exception):

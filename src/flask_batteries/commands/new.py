@@ -2,50 +2,27 @@
 import os
 import sys
 import re
-from jinja2 import Environment, PackageLoader, select_autoescape
 from datetime import datetime
 import subprocess
 import click
-from pkg_resources import resource_filename
+from pkg_resources import resource_filename, get_distribution
 import shutil
 import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
 from ..installers import FlaskMigrateInstaller
-from ..helpers import set_env_vars, pip
-
-env = Environment(
-    loader=PackageLoader("flask_batteries", "template"),
-    autoescape=select_autoescape(),
-)
-
-
-def render_template(filename, **params):
-    filename = filename.replace("\\", "/")
-    template = env.get_template(filename)
-    return template.render(**params)
-
-
-def copy_template(filename, target=None, **params):
-    if target is None:
-        target = filename
-    pattern = r"src[\\/]+assets[\\/]+static"
-    match = re.match(pattern, filename)
-    if match is None:
-        with open(target, "w+") as f:
-            f.write(render_template(filename, **params))
-    else:
-        # Copy image files directly
-        shutil.copyfile(
-            resource_filename("flask_batteries", f"template/{filename}"), target
-        )
-    return
+from ..helpers import set_env_vars, pip, add_to_config, copy_template
 
 
 @click.command(help="Generate a new Flask-Batteries app")
 @click.argument("name", required=False)
 @click.option(
     "--path-to-venv", default="venv", help="Path to virtual environment directory"
+)
+@click.option(
+    "--skip-webpack",
+    is_flag=True,
+    help="Use static folder instead of Webpack asset pipeline",
 )
 @click.option(
     "--skip-webpack",
@@ -75,9 +52,9 @@ def new(name, path_to_venv, skip_webpack):
             )
         os.chdir(name)
         if os.name != "nt":
-            subprocess.run(f"python -m venv {path_to_venv}", shell=True)
+            subprocess.run(["python", "-m", "venv", path_to_venv])
         else:
-            subprocess.run(f"py -m venv {path_to_venv}", shell=True)
+            subprocess.run(["py", "-m", "venv", path_to_venv])
 
     # Look at .gitignore to find files in template not to copy
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
@@ -102,23 +79,33 @@ def new(name, path_to_venv, skip_webpack):
                 copy_template(resource, name=name, skip_webpack=skip_webpack)
 
     # Initialize git repo
-    subprocess.run(["git", "init", "--initial-branch=main"])
+    subprocess.run(
+        ["git", "init", "--initial-branch=main"], shell=True, stdout=subprocess.DEVNULL
+    )
 
     # Install PyPI package dependencies
     dependencies = ["flask", "pytest", "requests"]
     if os.environ.get("FLASK_BATTERIES_ENV") not in ("testing", "development"):
-        dependencies.append("flask-batteries")
+        # Install
+        current_version = get_distribution("flask-batteries").version
+        dependencies.append("flask-batteries==" + current_version)
     else:
         assert (
             os.environ.get("FLASK_BATTERIES_PATH") is not None
         ), "FLASK_BATTERIES_PATH env variable not set"
         subprocess.run(
-            f"{pip()} install -q -q -e {os.environ.get('FLASK_BATTERIES_PATH')}",
-            shell=True,
+            [pip(), "install", "-q", "-q", "-e", os.environ.get("FLASK_BATTERIES_PATH")]
         )
-    subprocess.run(f"{pip()} install -q -q " + " ".join(dependencies), shell=True)
+
+    subprocess.run(
+        [pip(), "install", "-q", "-q"] + dependencies, stdout=subprocess.DEVNULL
+    )
     open("requirements.txt", "w+").close()
-    subprocess.run(f"{pip()} freeze > requirements.txt", shell=True)
+    subprocess.run(
+        [f"{pip()} freeze -q -q > requirements.txt"],
+        stdout=subprocess.DEVNULL,
+        shell=True,
+    )
 
     ## Set default environment variables
     envs = {
@@ -151,19 +138,9 @@ def new(name, path_to_venv, skip_webpack):
             target=os.path.join("src", "static", "stylesheets", "base.css"),
         )
 
-        with open(os.path.join("src", "config.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            while i < len(lines):
-                if lines[i] == f"{TAB}# --flask_batteries_mark base_config--":
-                    lines.insert(i, f"{TAB}FLASK_BATTERIES_USE_WEBPACK=False")
-                    break
-                i += 1
-
-            f.seek(0)
-            f.truncate()
-            f.write("\n".join(lines))
+        add_to_config(base_config=["FLASK_BATTERIES_USE_WEBPACK=False"])
 
     # Install Flask-Migrate and Flask-SQLAlchemy
     FlaskMigrateInstaller.install()
+
+    click.echo("Done")

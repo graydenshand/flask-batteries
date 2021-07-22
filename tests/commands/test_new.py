@@ -7,6 +7,7 @@ import re
 import subprocess
 import pathspec
 import traceback
+from flask_batteries.helpers import activate
 
 
 def test_new_doesnt_fail(cli):
@@ -51,7 +52,7 @@ def test_new_with_path_to_venv_option_doesnt_fail():
     with runner.isolated_filesystem():
         os.mkdir("app")
         os.chdir("app")
-        subprocess.run("python -m venv .venv", shell=True)
+        subprocess.run(["python", "-m", "venv", ".venv"])
         result = runner.invoke(new, ["--path-to-venv", ".venv"])
         assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
