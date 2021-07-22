@@ -9,7 +9,8 @@ def test_flask_migrate_installer(app, cli):
     assert FlaskMigrateInstaller.verify()
 
     # Call uninstall
-    cli.invoke(uninstall, "migrate")
+    result = cli.invoke(uninstall, "migrate")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that models directory doesn't exist
     assert not os.path.exists(os.path.join("src", "migrations"))
@@ -25,7 +26,8 @@ def test_flask_migrate_installer(app, cli):
     assert not FlaskMigrateInstaller.verify()
 
     # Install the extension
-    cli.invoke(install, "migrate")
+    result = cli.invoke(install, "migrate")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that migrations directory exists
     assert os.path.exists(os.path.join("src", "migrations"))

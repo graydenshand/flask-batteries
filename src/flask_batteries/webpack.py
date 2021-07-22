@@ -15,8 +15,10 @@ def static_url_for(path):
     else:
         return url_for("static", filename=path)
 
+
 def webpack_init(app):
-    if app.config['ENV'] == 'development':
+    if app.config["ENV"] == "development":
+
         @app.before_first_request
         def build_assets_on_reload_if_webpack_dev_server_not_running():
             if app.config["ENV"] == "development":
@@ -45,6 +47,4 @@ def webpack_init(app):
 
     @app.context_processor
     def webpack_init_template_vars():
-        return {
-            "static_url_for": static_url_for
-        }
+        return {"static_url_for": static_url_for}

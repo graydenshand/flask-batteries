@@ -19,10 +19,12 @@ env = Environment(
     autoescape=select_autoescape(),
 )
 
+
 def render_template(filename, **params):
     filename = filename.replace("\\", "/")
     template = env.get_template(filename)
     return template.render(**params)
+
 
 def copy_template(filename, target=None, **params):
     if target is None:
@@ -39,10 +41,17 @@ def copy_template(filename, target=None, **params):
         )
     return
 
+
 @click.command(help="Generate a new Flask-Batteries app")
 @click.argument("name", required=False)
-@click.option("--path-to-venv", default="venv", help="Path to virtual environment directory")
-@click.option("--skip-webpack", is_flag=True, help="Use static folder instead of Webpack asset pipeline")
+@click.option(
+    "--path-to-venv", default="venv", help="Path to virtual environment directory"
+)
+@click.option(
+    "--skip-webpack",
+    is_flag=True,
+    help="Use static folder instead of Webpack asset pipeline",
+)
 def new(name, path_to_venv, skip_webpack):
     click.echo("Generating new app named: %s" % name)
 
@@ -61,15 +70,14 @@ def new(name, path_to_venv, skip_webpack):
         try:
             os.mkdir(name)
         except FileExistsError:
-            raise click.ClickException(f"Can't create directory '{name}' as it already exists")
+            raise click.ClickException(
+                f"Can't create directory '{name}' as it already exists"
+            )
         os.chdir(name)
-        if os.name != 'nt':
+        if os.name != "nt":
             subprocess.run(f"python -m venv {path_to_venv}", shell=True)
         else:
             subprocess.run(f"py -m venv {path_to_venv}", shell=True)
-
-    
-    
 
     # Look at .gitignore to find files in template not to copy
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
@@ -101,8 +109,13 @@ def new(name, path_to_venv, skip_webpack):
     if os.environ.get("FLASK_BATTERIES_ENV") not in ("testing", "development"):
         dependencies.append("flask-batteries")
     else:
-        assert os.environ.get("FLASK_BATTERIES_PATH") is not None, "FLASK_BATTERIES_PATH env variable not set"
-        subprocess.run(f"{pip()} install -q -q -e {os.environ.get('FLASK_BATTERIES_PATH')}", shell=True)
+        assert (
+            os.environ.get("FLASK_BATTERIES_PATH") is not None
+        ), "FLASK_BATTERIES_PATH env variable not set"
+        subprocess.run(
+            f"{pip()} install -q -q -e {os.environ.get('FLASK_BATTERIES_PATH')}",
+            shell=True,
+        )
     subprocess.run(f"{pip()} install -q -q " + " ".join(dependencies), shell=True)
     open("requirements.txt", "w+").close()
     subprocess.run(f"{pip()} freeze > requirements.txt", shell=True)
@@ -116,7 +129,6 @@ def new(name, path_to_venv, skip_webpack):
     }
     set_env_vars(skip_check=True, **envs)
 
-
     # Remove webpack files if necessary
     if skip_webpack:
         shutil.rmtree(os.path.join("src", "assets"))
@@ -126,12 +138,20 @@ def new(name, path_to_venv, skip_webpack):
         os.mkdir(os.path.join("src", "static", "images"))
         os.mkdir(os.path.join("src", "static", "javascript"))
 
+        copy_template(
+            os.path.join("src", "assets", "static", "images", "flask-logo.png"),
+            target=os.path.join("src", "static", "images", "flask-logo.png"),
+        )
+        copy_template(
+            os.path.join("src", "assets", "static", "images", "flask-icon.png"),
+            target=os.path.join("src", "static", "images", "flask-icon.png"),
+        )
+        copy_template(
+            os.path.join("src", "assets", "stylesheets", "base.scss"),
+            target=os.path.join("src", "static", "stylesheets", "base.css"),
+        )
 
-        copy_template(os.path.join("src", "assets", "static", "images", "flask-logo.png"), target=os.path.join("src", "static", "images", "flask-logo.png"))
-        copy_template(os.path.join("src", "assets", "static", "images", "flask-icon.png"), target=os.path.join("src", "static", "images", "flask-icon.png"))
-        copy_template(os.path.join("src", "assets", "stylesheets", "base.scss"), target=os.path.join("src", "static", "stylesheets", "base.css"))
-
-        with open(os.path.join("src", "config.py"), 'r+') as f:
+        with open(os.path.join("src", "config.py"), "r+") as f:
             lines = f.read().split("\n")
 
             i = 0
@@ -144,7 +164,6 @@ def new(name, path_to_venv, skip_webpack):
             f.seek(0)
             f.truncate()
             f.write("\n".join(lines))
-
 
     # Install Flask-Migrate and Flask-SQLAlchemy
     FlaskMigrateInstaller.install()

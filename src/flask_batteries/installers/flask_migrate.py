@@ -29,23 +29,17 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
         if result.returncode != 0:
             print(result.stderr, file=sys.stderr)
             raise Exception("Unable to initalize Flask-Migrate")
-        click.secho("Initialized migrations directory at `src/migrations`", fg="green")
 
     @classmethod
     def uninstall(cls):
         super().uninstall()
         if os.path.exists(os.path.join("src", "migrations")):
+            print("Removing src/migrations folder")
             shutil.rmtree(os.path.join("src", "migrations"))
-            click.secho(f"Destroyed {os.path.join('src', 'migrations')}", fg="red")
 
     @classmethod
-    def verify(cls, verbose=False):
+    def verify(cls):
         if not os.path.exists(os.path.join("src", "migrations")):
-            if verbose:
-                click.secho(
-                    f"Package Verification Error: Flask-Migrate `migrations` directory doesn't exist",
-                    fg="red",
-                )
             return False
         else:
-            return super().verify(verbose)
+            return super().verify()

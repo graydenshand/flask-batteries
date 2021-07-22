@@ -4,7 +4,7 @@ import subprocess
 import re
 import sys
 from ..config import PATH_TO_VENV, TAB
-from ..helpers import pip, activate, env_var, rm_env_vars, set_env_vars
+from ..helpers import *
 
 
 class FlaskExtInstaller:
@@ -19,17 +19,18 @@ class FlaskExtInstaller:
     dependencies = []
     pypi_dependencies = []
     envs = {}
+    shell_vars = []
 
     @classmethod
     def install(cls):
         # Prevent installing same package twice
         if cls.verify():
-            click.secho(f"{cls.package_name} is already installed")
-            return
+            raise InstallError(f"{cls.package_name} is already installed")
 
         # Install any dependencies if not already installed
         for dep in cls.dependencies:
-            dep.install()
+            if not dep.verify():
+                dep.install()
 
         # Install package from PyPI
         if cls.package_name is not None:
@@ -37,65 +38,23 @@ class FlaskExtInstaller:
                 f"{pip()} install -q -q {cls.package_name} {' '.join(cls.pypi_dependencies)}",
                 shell=True,
             )
-            click.secho(f"Installed PyPI package `{cls.package_name}`", fg="green")
             subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
-            click.secho("Updated requirements.txt", fg="green")
 
         # Edit __init__.py
-        with open(os.path.join("src", "__init__.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark import_packages--":
-                    for import_ in cls.imports:
-                        lines.insert(i, import_)
-                        i += 1
-                elif lines[i] == "# --flask_batteries_mark init_extensions--":
-                    for init in cls.inits:
-                        lines.insert(i, init)
-                        i += 1
-                elif (
-                    lines[i]
-                    == f"{TAB}{TAB}# --flask_batteries_mark attach_extensions--"
-                ):
-                    for attachment in cls.attachments:
-                        lines.insert(i, f"{TAB}{TAB}{attachment}")
-                        i += 1
-                    break
-                i += 1
-            f.seek(0)
-            f.truncate()
-            f.write("\n".join(lines))
-        click.secho(f"Updated {os.path.join('src', '__init__.py')}", fg="green")
+        add_to_init(
+            imports=cls.imports,
+            initializations=cls.inits,
+            attachments=cls.attachments,
+            shell_vars=cls.shell_vars,
+        )
 
         # Edit config.py
-        with open(os.path.join("src", "config.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            while i < len(lines):
-                if lines[i] == f"{TAB}# --flask_batteries_mark base_config--":
-                    for item in cls.base_config:
-                        lines.insert(i, f"{TAB}{item}")
-                        i += 1
-                elif lines[i] == f"{TAB}# --flask_batteries_mark production_config--":
-                    for item in cls.production_config:
-                        lines.insert(i, f"{TAB}{item}")
-                        i += 1
-                elif lines[i] == f"{TAB}# --flask_batteries_mark development_config--":
-                    for item in cls.development_config:
-                        lines.insert(i, f"{TAB}{item}")
-                        i += 1
-                elif lines[i] == f"{TAB}# --flask_batteries_mark testing_config--":
-                    for item in cls.testing_config:
-                        lines.insert(i, f"{TAB}{item}")
-                        i += 1
-                i += 1
-            f.seek(0)
-            f.truncate()
-            f.write("\n".join(lines))
-        click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="green")
+        add_to_config(
+            base_config=cls.base_config,
+            production_config=cls.production_config,
+            development_config=cls.development_config,
+            testing_config=cls.testing_config,
+        )
 
         # Add envs
         set_env_vars(**cls.envs)
@@ -108,65 +67,28 @@ class FlaskExtInstaller:
                 f"{pip()} uninstall -q -q -y {cls.package_name} {' '.join(cls.pypi_dependencies)}",
                 shell=True,
             )
-            click.secho(f"Uninstalled PyPI package `{cls.package_name}`", fg="red")
             subprocess.run(f"{pip()} freeze -q -q > requirements.txt", shell=True)
-            click.secho("Updated requirements.txt", fg="red")
 
         # Remove initialization from __init__.py and create_app() func
-        with open(os.path.join("src", "__init__.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark attach_extensions--":
-                    break
-                elif (
-                    lines[i].lstrip(" ") in cls.imports
-                    or lines[i].lstrip(" ") in cls.inits
-                    or lines[i].lstrip(" ") in cls.attachments
-                ):
-                    del lines[i]
-                    i -= 1
-                i += 1
-
-            f.seek(0)
-            f.truncate()
-            f.write("\n".join(lines))
-        click.secho(f"Updated {os.path.join('src', '__init__.py')}", fg="red")
+        lines_to_remove = cls.imports + cls.inits + cls.attachments + cls.shell_vars
+        remove_from_file(os.path.join("src", "__init__.py"), lines_to_remove)
 
         # Edit config.py
-        with open(os.path.join("src", "config.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark testing_config--":
-                    break
-                elif (
-                    lines[i].lstrip(" ") in cls.base_config
-                    or lines[i].lstrip(" ") in cls.production_config
-                    or lines[i].lstrip(" ") in cls.development_config
-                    or lines[i].lstrip(" ") in cls.testing_config
-                ):
-                    del lines[i]
-                    i -= 1
-                i += 1
-            f.seek(0)
-            f.truncate()
-            f.write("\n".join(lines))
-        click.secho(f"Updated {os.path.join('src', 'config.py')}", fg="red")
+        lines_to_remove = (
+            cls.base_config
+            + cls.production_config
+            + cls.development_config
+            + cls.testing_config
+        )
+        remove_from_file(os.path.join("src", "config.py"), lines_to_remove)
 
         # Remove env vars
         rm_env_vars(**cls.envs)
 
     @classmethod
-    def verify(cls, verbose=False):
+    def verify(cls):
         for dep in cls.dependencies:
             if not dep.verify():
-                if verbose:
-                    click.secho(
-                        f"Package Verification Error: {cls.package_name} is missing depencency -- {dep}"
-                    )
                 return False
 
         # Verify package is istalled from PyPI
@@ -174,73 +96,27 @@ class FlaskExtInstaller:
             reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
             installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
             if cls.package_name not in installed_packages:
-                if verbose:
-                    print(f"Package Verification Error: {cls.package_name} not found in package manager")
                 return False
-            if verbose:
-                print("Verified PyPI installation")
 
-        # Remove initialization from __init__.py and create_app() func
-        with open(os.path.join("src", "__init__.py"), "r+") as f:
-            lines = f.read().split("\n")
+        # Verify __init__.py
+        lines_to_verify = cls.imports + cls.inits + cls.attachments
+        if not verify_file(os.path.join("src", "__init__.py"), lines_to_verify):
+            return False
 
-            i = 0
-            counter = 0
-            while i < len(lines):
-                if lines[i] == "# --flask_batteries_mark attach_extensions--":
-                    break
-                elif (
-                    lines[i].lstrip(" ") in cls.imports
-                    or lines[i].lstrip(" ") in cls.inits
-                    or lines[i].lstrip(" ") in cls.attachments
-                ):
-                    counter += 1
-                i += 1
-            if counter != len(cls.imports) + len(cls.inits) + len(cls.attachments):
-                if verbose:
-                    print(f"Package Verification Error: {cls.package_name} __init__.py missing expected lines")
-                return False
-        if verbose:
-            print(f"Verified {os.path.join('src', '__init__.py')}")
-
-        # Edit config.py
-        with open(os.path.join("src", "config.py"), "r+") as f:
-            lines = f.read().split("\n")
-
-            i = 0
-            counter = 0
-            while i < len(lines):
-                if lines[i] == f"{TAB}# --flask_batteries_mark testing_config--":
-                    break
-                elif (
-                    lines[i].lstrip(" ") in cls.base_config
-                    or lines[i].lstrip(" ") in cls.production_config
-                    or lines[i].lstrip(" ") in cls.development_config
-                    or lines[i].lstrip(" ") in cls.testing_config
-                ):
-                    counter += 1
-                i += 1
-            if counter != len(cls.base_config) + len(cls.production_config) + len(
-                cls.development_config
-            ) + len(cls.testing_config):
-                if verbose:
-                    print(
-                        f"Package Verification Error: {cls.package_name} config.py missing expected lines")
-                return False
-            if verbose:
-                print(f"Verified {os.path.join('src', 'config.py')}")
+        # Verify config.py
+        lines_to_verify = (
+            cls.base_config
+            + cls.production_config
+            + cls.development_config
+            + cls.testing_config
+        )
+        if not verify_file(os.path.join("src", "config.py"), lines_to_verify):
+            return False
 
         # Verify ENVS
         with open(activate(), "r") as f:
             body = f.read()
             for k, v in cls.envs.items():
                 if f"{env_var(k,v)}\n" not in body:
-                    if verbose:
-                        print(f"Package Verification Error: {cls.package_name} env variables missing from {activate}")
                     return False
-            if verbose:
-                print(f"Verified environment variables")
         return True
-
-
-    

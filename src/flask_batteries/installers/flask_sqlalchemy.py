@@ -28,19 +28,10 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
         # Create a 'models' folder if one does not exist
         if not os.path.exists(os.path.join("src", "models")):
             os.mkdir(os.path.join("src", "models"))
-            click.secho(f"Created {os.path.join('src', 'models')}", fg="green")
             open(os.path.join("src", "models", "__init__.py"), "w+").close()
-            click.secho(
-                f"Created {os.path.join('src', 'models', '__init__.py')}", fg="green"
-            )
-
         if not os.path.exists(os.path.join("test", "models")):
             os.mkdir(os.path.join("test", "models"))
-            click.secho(f"Created {os.path.join('test', 'models')}", fg="green")
             open(os.path.join("test", "models", "__init__.py"), "w+").close()
-            click.secho(
-                f"Created {os.path.join('test', 'models', '__init__.py')}", fg="green"
-            )
 
         # Set up a database if needed
         if not database_exists(cls.envs["DATABASE_URL"]):
@@ -52,25 +43,18 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
         # Delete models folder
         if os.path.exists(os.path.join("src", "models")):
             shutil.rmtree(os.path.join("src", "models"))
-            click.secho(f"Destroyed {os.path.join('src', 'models')}", fg="red")
 
         if os.path.exists(os.path.join("test", "models")):
             shutil.rmtree(os.path.join("test", "models"))
-            click.secho(f"Destroyed {os.path.join('test', 'models')}", fg="red")
 
     @classmethod
-    def verify(cls, verbose=False):
+    def verify(cls):
         if (
             not os.path.exists(os.path.join("src", "models"))
             or not os.path.exists(os.path.join("src", "models", "__init__.py"))
             or not os.path.exists(os.path.join("test", "models"))
             or not os.path.exists(os.path.join("test", "models", "__init__.py"))
         ):
-            if verbose:
-                click.secho(
-                    f"Package Verification Error: Flask-SQLAlchemy `models` directory not found",
-                    fg="red",
-                )
             return False
         else:
             return super().verify()

@@ -9,7 +9,8 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert FlaskSQLAlchemyInstaller.verify()
 
     # Call uninstall
-    cli.invoke(uninstall, "sqlalchemy")
+    result = cli.invoke(uninstall, "sqlalchemy")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that models directory doesn't exist
     assert not os.path.exists(os.path.join("src", "models"))
@@ -34,7 +35,8 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert not FlaskSQLAlchemyInstaller.verify()
 
     # Install the extension
-    cli.invoke(install, "sqlalchemy")
+    result = cli.invoke(install, "sqlalchemy")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that models directory exists
     assert os.path.exists(os.path.join("src", "models"))

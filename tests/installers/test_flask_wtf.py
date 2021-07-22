@@ -9,7 +9,8 @@ def test_flask_wtf_installer(app, cli):
     assert not FlaskWTFInstaller.verify()
 
     # Install the extension
-    cli.invoke(install, "wtf")
+    result = cli.invoke(install, "wtf")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that forms directory exists
     assert os.path.exists(os.path.join("src", "forms"))
@@ -18,7 +19,8 @@ def test_flask_wtf_installer(app, cli):
     assert FlaskWTFInstaller.verify()
 
     # Call uninstall
-    cli.invoke(uninstall, "wtf")
+    result = cli.invoke(uninstall, "wtf")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     # Check that forms directory doesn't exist
     assert not os.path.exists(os.path.join("src", "forms"))
