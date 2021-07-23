@@ -71,4 +71,4 @@ Commands to add:
 * ❌ `flask generate form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
 * ❌ `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
 
-* ❌ Allow skipping of webpack, and using a simple 'static' folder. 
+* ✅ Allow skipping of webpack, and using a simple 'static' folder. 
