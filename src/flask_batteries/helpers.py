@@ -43,6 +43,10 @@ def env_var(key, val):
         return f"set {key}={val}"
 
 
+def snake_to_camel_case(string):
+    return "".join([seg[0].upper() + seg[1:] for seg in string.split("_")])
+
+
 def set_env_vars(skip_check=False, **kwargs):
     """
     Add environment variables to the virtual env activation script
@@ -217,6 +221,11 @@ def copy_template(filename, target=None, **params):
             resource_filename("flask_batteries", f"template/{filename}"), target
         )
     return
+
+
+def create_file(filename, body):
+    with open(filename, "w") as f:
+        f.write(body)
 
 
 class FlaskBatteriesError(Exception):

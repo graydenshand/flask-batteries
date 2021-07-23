@@ -2,6 +2,7 @@ from ..conf_tests import app, cli
 from flask_batteries.commands import generate
 import os
 import traceback
+from flask_batteries.config import TAB
 
 
 def test_generate_route_creates_correct_files(cli, app):
@@ -13,4 +14,4 @@ def test_generate_route_creates_correct_files(cli, app):
     with open("src/routes/__init__.py", "r") as f:
         content = f.read()
         assert "from .sign_up import sign_up_view" in content
-        assert '\tapp.add_url_rule("/sign-up/", view_func=sign_up_view)' in content
+        assert f'{TAB}app.add_url_rule("/sign-up/", view_func=sign_up_view)' in content
