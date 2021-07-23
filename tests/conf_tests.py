@@ -5,6 +5,7 @@ import subprocess
 import os
 import shutil
 import traceback
+from flask_batteries.helpers import activate
 
 
 @pytest.fixture()
@@ -20,6 +21,7 @@ def cli():
 @pytest.fixture()
 def app(cli):
     result = cli.invoke(new)
+    os.environ["FLASK_APP"] = "main.py"
     assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
 
@@ -27,3 +29,17 @@ def app(cli):
 def route(cli, app):
     result = cli.invoke(generate, ["route", "sign_up"])
     assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
+
+@pytest.fixture
+def stylesheet(cli, app):
+    if os.name != "nt":
+        result = subprocess.run(
+            f"source {activate()} && flask generate stylesheet typography", shell=True
+        )
+    else:
+        result = subprocess.run(
+            f"{activate().rstrip('.bat')} && flask generate stylesheet typography",
+            shell=True,
+        )
+    assert result.returncode == 0, result.stdout

@@ -100,20 +100,17 @@ class FlaskExtInstaller:
         for dep in cls.dependencies:
             if not dep.verify():
                 return False
-        print("TEST1")
         # Verify package is istalled from PyPI
         if cls.package_name is not None:
             reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
             installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
             if cls.package_name not in installed_packages:
                 return False
-        print("TEST2")
         # Verify __init__.py
         lines_to_verify = cls.imports + cls.inits + cls.attachments
         if not verify_file(os.path.join("src", "__init__.py"), lines_to_verify):
             return False
 
-        print("TEST3")
         # Verify config.py
         lines_to_verify = (
             cls.base_config
@@ -124,7 +121,6 @@ class FlaskExtInstaller:
         if not verify_file(os.path.join("src", "config.py"), lines_to_verify):
             return False
 
-        print("TEST4")
         # Verify ENVS
         with open(activate(), "r") as f:
             body = f.read()

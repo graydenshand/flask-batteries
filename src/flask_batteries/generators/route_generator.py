@@ -16,17 +16,20 @@ class RouteGenerator(BaseGenerator):
         # Generate route file: routes/<name>.py
         content = route_template.format(**template_data)
         create_file(os.path.join("src", "routes", f"{name}.py"), content)
+        yield f'Created {os.path.join("src", "routes", f"{name}.py")}'
 
         # Generate template: templates/<name>.html
         content = view_template.format(**template_data)
         create_file(os.path.join("src", "templates", f"{name}.html"), content)
+        yield f'Created {os.path.join("src", "templates", f"{name}.html")}'
 
         # Generate test: routes/<name>.py
         content = test_template.format(**template_data)
         create_file(os.path.join("test", "routes", f"test_{name}.py"), content)
+        yield f'Created {os.path.join("test", "routes", f"test_{name}.py")}'
 
         # Update src/routes/__init__.py
-        with open("src/routes/__init__.py", "r+") as f:
+        with open(os.path.join("src", "routes", "__init__.py"), "r+") as f:
             content = f.read()
             content = content.split("\n")
             i = 0
@@ -44,18 +47,22 @@ class RouteGenerator(BaseGenerator):
             f.seek(0)
             f.write("\n".join(content))
             f.truncate()
+        yield f'Added url_rule(s) to {os.path.join("src", "routes", "__init__.py")}'
 
     @staticmethod
     def destroy(name):
         name = name.lower()
         # Destroy route file: routes/<name>.py
-        os.remove(f"src/routes/{name}.py")
+        os.remove(os.path.join("src", "routes", f"{name}.py"))
+        yield f'Destroyed {os.path.join("src", "routes", f"{name}.py")}'
         # Destroy template: templates/<name>.html
-        os.remove(f"src/templates/{name}.html")
+        os.remove(os.path.join("src", "templates", f"{name}.html"))
+        yield f'Destroyed {os.path.join("src", "templates", f"{name}.html")}'
         # Destroy test: routes/<name>.py
-        os.remove(f"test/routes/test_{name}.py")
+        os.remove(os.path.join("test", "routes", f"test_{name}.py"))
+        yield f'Destoryed {os.path.join("test", "routes", f"test_{name}.py")}'
         # Update routes/__init__.py
-        with open("src/routes/__init__.py", "r+") as f:
+        with open(os.path.join("src", "routes", "__init__.py"), "r+") as f:
             content = f.read()
             content = content.split("\n")
             content.remove(f"from .{name} import {name}_view")
@@ -65,6 +72,7 @@ class RouteGenerator(BaseGenerator):
             f.seek(0)
             f.write("\n".join(content))
             f.truncate()
+        yield f'Removed URL rule(s) from {os.path.join("src", "routes", "__init__.py")}'
 
 
 # Template for generated file in src/routes
