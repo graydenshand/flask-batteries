@@ -35,3 +35,12 @@ def wtf():
 
 
 uninstall.add_command(wtf)
+
+
+@click.command(help="Uninstaller Flask-Login")
+def login():
+    click.echo("Installing Flask-Login")
+    FlaskLoginInstaller.uninstall()
+    click.echo("Done")
+
+uninstall.add_command(login)

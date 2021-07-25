@@ -4,11 +4,13 @@
 
 An opinionated command line tool for bootstrapping Flask applications with less boiler-plate code.
 
-Inspired by Ruby on Rails.
+This package does two things:
+1) Asserts a sensible project structure for larger applications.
+2) Supplies new commands to the flask cli for managing this project structure.
 
 
 ## Usage
-This package adds a collection of command line utilites for modifying your Flask project.
+
 
 It's recommended to install this package in an isolated virtual environment. The best way to start a new project is like this:
 
@@ -60,7 +62,8 @@ Commands to add:
 * ✅ `flask (un)install wtf`: (un)install Flask-WTF
 * ❌ `flask (un)install uploads`: (un)install Flask-Uploads
 * ❌ `flask (un)install babel`: (un)install Flask-Babel
-* ❌ `flask (un)install login`: (un)install Flask-Login
+* ✅ `flask (un)install login`: (un)install Flask-Login
+* ❌ `flask (un)install principal`: (un)install Flask-Mail
 * ❌ `flask (un)install mail`: (un)install Flask-Mail
 * ❌ `flask (un)install talisman`: (un)install Flask-Talisman
 * ❌ `flask (un)install cors`: (un)install Flask-CORS
@@ -69,6 +72,6 @@ Commands to add:
 * ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
 * ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
 * ❌ `flask generate form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
-* ❌ `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
+* ✅ `flask generate stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
 
 * ✅ Allow skipping of webpack, and using a simple 'static' folder. 
