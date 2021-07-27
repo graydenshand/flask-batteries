@@ -79,7 +79,7 @@ def test_new_with_skip_webpack(cli):
 
 
 def test_new_with_git_branch(cli):
-    result = cli.invoke(new, ["--git-initial-branch", 'primary'])
+    result = cli.invoke(new, ["--git-initial-branch", "primary"])
     assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     subprocess.run("git add . && git commit -m '.'", shell=True, check=True)

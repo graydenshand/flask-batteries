@@ -43,12 +43,15 @@ def login():
     FlaskLoginInstaller.uninstall()
     click.echo("Done")
 
+
 uninstall.add_command(login)
+
 
 @click.command(help="Uninstall Flask-Mail")
 def mail():
     click.echo("Installing Flask-Mail")
     FlaskMailInstaller.uninstall()
     click.echo("Done")
+
 
 uninstall.add_command(mail)

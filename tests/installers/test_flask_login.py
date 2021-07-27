@@ -5,6 +5,7 @@ import os
 from flask_batteries.config import TAB
 import traceback
 
+
 def test_flask_login_installer(app, cli):
     assert not FlaskLoginInstaller.verify()
 
@@ -25,6 +26,5 @@ def test_flask_login_installer(app, cli):
     with open(os.path.join("src", "__init__.py")) as f:
         content = f.read()
         assert "@login_manager.user_loader" not in content
-
 
     assert not FlaskLoginInstaller.verify()

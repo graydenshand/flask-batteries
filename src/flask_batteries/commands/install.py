@@ -2,6 +2,7 @@ import click
 from ..installers import *
 from ..config import TAB
 
+
 @click.group(help="Install a flask extension")
 def install():
     pass
@@ -43,9 +44,11 @@ def login():
     FlaskLoginInstaller.install()
     click.echo("Done")
     click.echo("Additional configuration steps required:")
-    click.echo(f"{TAB}1. Complete \"load_user()\" function in src/__init__.py")
+    click.echo(f'{TAB}1. Complete "load_user()" function in src/__init__.py')
+
 
 install.add_command(login)
+
 
 @click.command(help="Install Flask-Mail")
 def mail():
@@ -54,5 +57,6 @@ def mail():
     click.echo("Done")
     click.echo("Additional configuration steps required:")
     click.echo(f"{TAB}1. Set Flask-Mail config variables in src/config.py")
+
 
 install.add_command(mail)

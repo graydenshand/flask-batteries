@@ -11,7 +11,13 @@ import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
 from ..installers import FlaskMigrateInstaller
-from ..helpers import set_env_vars, pip, add_to_config, copy_template, FlaskBatteriesError
+from ..helpers import (
+    set_env_vars,
+    pip,
+    add_to_config,
+    copy_template,
+    FlaskBatteriesError,
+)
 
 
 @click.command(help="Generate a new Flask-Batteries app")
@@ -24,7 +30,11 @@ from ..helpers import set_env_vars, pip, add_to_config, copy_template, FlaskBatt
     is_flag=True,
     help="Use static folder instead of Webpack asset pipeline",
 )
-@click.option("--git-initial-branch", help="The name of the main git branch for the project. Defaults to 'main'.", default='main')
+@click.option(
+    "--git-initial-branch",
+    help="The name of the main git branch for the project. Defaults to 'main'.",
+    default="main",
+)
 def new(name, path_to_venv, skip_webpack, git_initial_branch):
     click.echo("Generating new app named: %s" % name)
 
@@ -79,7 +89,6 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
         [f"git init --initial-branch={git_initial_branch}"], check=True, shell=True
     )
 
-
     # Install PyPI package dependencies
     dependencies = ["flask", "pytest", "requests"]
     if os.environ.get("FLASK_BATTERIES_ENV") not in ("testing", "development"):
@@ -91,19 +100,28 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
             os.environ.get("FLASK_BATTERIES_PATH") is not None
         ), "FLASK_BATTERIES_PATH env variable not set"
         subprocess.run(
-            [pip(), "install", "-q", "-q", "-e", os.environ.get("FLASK_BATTERIES_PATH")],
-            check=True
+            [
+                pip(),
+                "install",
+                "-q",
+                "-q",
+                "-e",
+                os.environ.get("FLASK_BATTERIES_PATH"),
+            ],
+            check=True,
         )
 
     subprocess.run(
-        [pip(), "install", "-q", "-q"] + dependencies, stdout=subprocess.DEVNULL, check=True
+        [pip(), "install", "-q", "-q"] + dependencies,
+        stdout=subprocess.DEVNULL,
+        check=True,
     )
     open("requirements.txt", "w+").close()
     reqs_result = subprocess.run(
         [f"{pip()} freeze -q -q > requirements.txt"],
         stdout=subprocess.DEVNULL,
         shell=True,
-        check=True
+        check=True,
     )
 
     ## Set default environment variables

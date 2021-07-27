@@ -3,6 +3,7 @@ from ..config import TAB
 import os
 import shutil
 
+
 class FlaskMailInstaller(FlaskExtInstaller):
     package_name = "Flask-Mail"
     imports = ["from flask_mail import Mail"]
@@ -10,16 +11,14 @@ class FlaskMailInstaller(FlaskExtInstaller):
     attachments = ["mail.init_app(app)"]
 
     base_config = [
-        "# Flask-Mail"
-        "MAIL_SERVER = \"localhost\"",
+        "# Flask-Mail" 'MAIL_SERVER = "localhost"',
         "MAIL_PORT = 25",
         "MAIL_USE_TLS = False",
         "MAIL_USE_SSL = False",
         "MAIL_USERNAME = None",
-        "MAIL_PASSWORD = None", 
-        "MAIL_DEFAULT_SENDER = None"
+        "MAIL_PASSWORD = None",
+        "MAIL_DEFAULT_SENDER = None",
     ]
-
 
     @classmethod
     def install(cls):
@@ -28,8 +27,8 @@ class FlaskMailInstaller(FlaskExtInstaller):
         """
         super().install()
 
-        if not os.path.exists(os.path.join("src","templates","mail")):
-            os.mkdir(os.path.join("src","templates","mail"))
+        if not os.path.exists(os.path.join("src", "templates", "mail")):
+            os.mkdir(os.path.join("src", "templates", "mail"))
 
     @classmethod
     def uninstall(cls):
@@ -38,15 +37,15 @@ class FlaskMailInstaller(FlaskExtInstaller):
         """
         super().uninstall()
 
-        if os.path.exists(os.path.join("src","templates","mail")):
-            shutil.rmtree(os.path.join("src","templates","mail"))
+        if os.path.exists(os.path.join("src", "templates", "mail")):
+            shutil.rmtree(os.path.join("src", "templates", "mail"))
 
     @classmethod
     def verify(cls):
         """
         Extend default verify function by verifying 'mail' folder in 'src/templates'
         """
-        if not os.path.exists(os.path.join("src","templates","mail")):
+        if not os.path.exists(os.path.join("src", "templates", "mail")):
             return False
         else:
             return super().verify()

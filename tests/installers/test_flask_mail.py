@@ -5,6 +5,7 @@ import os
 from flask_batteries.config import TAB
 import traceback
 
+
 def test_flask_mail_installer(app, cli):
     assert not FlaskMailInstaller.verify()
 
