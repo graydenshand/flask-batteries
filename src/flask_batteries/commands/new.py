@@ -86,7 +86,7 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
 
     # Initialize git repo
     subprocess.run(
-        [f"git init --initial-branch={git_initial_branch}"], check=True, shell=True
+        [f"git init --initial-branch={git_initial_branch}"], check=True, shell=True, stdout=subprocess.DEVNULL
     )
 
     # Install PyPI package dependencies
