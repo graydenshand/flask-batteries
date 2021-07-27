@@ -46,3 +46,13 @@ def login():
     click.echo(f"{TAB}1. Complete \"load_user()\" function in src/__init__.py")
 
 install.add_command(login)
+
+@click.command(help="Install Flask-Mail")
+def mail():
+    click.echo("Installing Flask-Mail")
+    FlaskMailInstaller.install()
+    click.echo("Done")
+    click.echo("Additional configuration steps required:")
+    click.echo(f"{TAB}1. Set Flask-Mail config variables in src/config.py")
+
+install.add_command(mail)

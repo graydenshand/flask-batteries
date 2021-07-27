@@ -11,6 +11,9 @@ class FlaskLoginInstaller(FlaskExtInstaller):
 
     @classmethod
     def install(cls):
+        """
+        Extend default install method by adding a "load_user" function to src/__init__.py
+        """
         super().install()
 
         with open(os.path.join("src", "__init__.py"), "r+") as f: 
@@ -36,6 +39,9 @@ class FlaskLoginInstaller(FlaskExtInstaller):
 
     @classmethod
     def uninstall(cls):
+        """
+        Extend default uninstall method by removing "load_user" function from src/__init__.py
+        """
         super().uninstall()
 
         with open(os.path.join("src", "__init__.py"), "r+") as f: 
@@ -50,5 +56,19 @@ class FlaskLoginInstaller(FlaskExtInstaller):
             f.seek(0)
             f.truncate()
             f.write('\n'.join(lines))
+
+
+    @classmethod
+    def verify(cls):
+        """
+        Extend default verify method by checking "load_user" function in src/__init__.py
+        """
+        with open(os.path.join("src", "__init__.py"), "r+") as f: 
+            content = f.read()
+
+            if "@login_manager.user_loader" not in content:
+                return False
+            else:
+                return super().verify()
 
 

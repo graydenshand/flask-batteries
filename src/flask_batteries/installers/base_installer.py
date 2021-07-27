@@ -125,6 +125,8 @@ class FlaskExtInstaller:
         with open(activate(), "r") as f:
             body = f.read()
             for k, v in cls.envs.items():
-                if f"{env_var(k,v)}\n" not in body:
+                declaration = env_var(k,v).replace(v, "")
+                pattern = r"(use|export) DATABASE_URL=(.*)\n"
+                if re.match(pattern, body) is None:
                     return False
         return True
