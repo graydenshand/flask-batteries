@@ -11,7 +11,7 @@ import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
 from ..installers import FlaskMigrateInstaller
-from ..helpers import set_env_vars, pip, add_to_config, copy_template
+from ..helpers import set_env_vars, pip, add_to_config, copy_template, FlaskBatteriesError
 
 
 @click.command(help="Generate a new Flask-Batteries app")
@@ -24,12 +24,8 @@ from ..helpers import set_env_vars, pip, add_to_config, copy_template
     is_flag=True,
     help="Use static folder instead of Webpack asset pipeline",
 )
-@click.option(
-    "--skip-webpack",
-    is_flag=True,
-    help="Use static folder instead of Webpack asset pipeline",
-)
-def new(name, path_to_venv, skip_webpack):
+@click.option("--git-initial-branch", help="The name of the main git branch for the project. Defaults to 'main'.", default='main')
+def new(name, path_to_venv, skip_webpack, git_initial_branch):
     click.echo("Generating new app named: %s" % name)
 
     # Set PATH_TO_VENV env variable, used by FlaskMigrateInstaller later
@@ -52,9 +48,9 @@ def new(name, path_to_venv, skip_webpack):
             )
         os.chdir(name)
         if os.name != "nt":
-            subprocess.run(["python", "-m", "venv", path_to_venv])
+            subprocess.run(["python3", "-m", "venv", path_to_venv], check=True)
         else:
-            subprocess.run(["py", "-m", "venv", path_to_venv])
+            subprocess.run(["py", "-m", "venv", path_to_venv], check=True)
 
     # Look at .gitignore to find files in template not to copy
     with open(resource_filename("flask_batteries", "template/.gitignore"), "r") as f:
@@ -80,8 +76,9 @@ def new(name, path_to_venv, skip_webpack):
 
     # Initialize git repo
     subprocess.run(
-        ["git", "init", "--initial-branch=main"], shell=True, stdout=subprocess.DEVNULL
+        [f"git init --initial-branch={git_initial_branch}"], check=True, shell=True
     )
+
 
     # Install PyPI package dependencies
     dependencies = ["flask", "pytest", "requests"]
@@ -94,17 +91,19 @@ def new(name, path_to_venv, skip_webpack):
             os.environ.get("FLASK_BATTERIES_PATH") is not None
         ), "FLASK_BATTERIES_PATH env variable not set"
         subprocess.run(
-            [pip(), "install", "-q", "-q", "-e", os.environ.get("FLASK_BATTERIES_PATH")]
+            [pip(), "install", "-q", "-q", "-e", os.environ.get("FLASK_BATTERIES_PATH")],
+            check=True
         )
 
     subprocess.run(
-        [pip(), "install", "-q", "-q"] + dependencies, stdout=subprocess.DEVNULL
+        [pip(), "install", "-q", "-q"] + dependencies, stdout=subprocess.DEVNULL, check=True
     )
     open("requirements.txt", "w+").close()
-    subprocess.run(
+    reqs_result = subprocess.run(
         [f"{pip()} freeze -q -q > requirements.txt"],
         stdout=subprocess.DEVNULL,
         shell=True,
+        check=True
     )
 
     ## Set default environment variables

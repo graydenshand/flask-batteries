@@ -76,3 +76,13 @@ def test_new_with_skip_webpack(cli):
     else:
         run_tests = subprocess.run("venv\\Scripts\\activate && pytest", shell=True)
     assert run_tests.returncode == 0, run_tests.stdout
+
+
+def test_new_with_git_branch(cli):
+    result = cli.invoke(new, ["--git-initial-branch", 'primary'])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
+    subprocess.run("git add . && git commit -m '.'", shell=True, check=True)
+
+    branches = subprocess.check_output("git branch", shell=True)
+    assert branches == b"* primary\n"
