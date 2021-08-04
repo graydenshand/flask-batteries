@@ -11,9 +11,10 @@ def generate():
 
 @click.command(help="Generate a new route")
 @click.argument("name")
-def route(name):
+@click.argument("url_rules", default=None, nargs=-1)
+def route(name, url_rules):
     click.echo(f"Generating route: {name}")
-    for checkpoint in RouteGenerator.generate(name):
+    for checkpoint in RouteGenerator.generate(name, url_rules):
         click.secho(checkpoint, fg="green")
     click.echo("Done")
 

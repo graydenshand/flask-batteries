@@ -2,11 +2,12 @@ from .base_generator import BaseGenerator
 from ..helpers import snake_to_camel_case, create_file
 from ..config import TAB
 import os
+import re
 
 
 class RouteGenerator(BaseGenerator):
     @staticmethod
-    def generate(name):
+    def generate(name, url_rules=[]):
         name = name.lower()
         template_data = {
             "camel_name": snake_to_camel_case(name),
@@ -40,10 +41,19 @@ class RouteGenerator(BaseGenerator):
                     content.insert(i, f"from .{name} import {name}_view")
                     break
                 i += 1
-            content.append(
-                # Add url rule
-                f"{TAB}app.add_url_rule(\"/{name.replace('_','-')}/\", view_func={name}_view)"
-            )
+            if url_rules:
+                for rule in url_rules:
+                    # Remove trailing slash if passed
+                    rule = rule.rstrip("/")
+                    # Add url rule (with trailing slash)
+                    content.append(
+                        f'{TAB}app.add_url_rule("{rule}/", view_func={name}_view)'
+                    )
+            else:
+                content.append(
+                    # Add url rule
+                    f"{TAB}app.add_url_rule(\"/{name.replace('_','-')}/\", view_func={name}_view)"
+                )
             f.seek(0)
             f.write("\n".join(content))
             f.truncate()
@@ -64,14 +74,13 @@ class RouteGenerator(BaseGenerator):
         # Update routes/__init__.py
         with open(os.path.join("src", "routes", "__init__.py"), "r+") as f:
             content = f.read()
-            content = content.split("\n")
-            content.remove(f"from .{name} import {name}_view")
-            content.remove(
-                f"{TAB}app.add_url_rule(\"/{name.replace('_','-')}/\", view_func={name}_view)"
-            )
+            pattern = fr"from .{name} import {name}_view\n"
+            content = re.sub(pattern, "", content)
+            pattern = fr'{TAB}app.add_url_rule\(".*?", view_func={name}_view\)\n'
+            content = re.sub(pattern, "", content)
             f.seek(0)
-            f.write("\n".join(content))
             f.truncate()
+            f.write(content)
         yield f'Removed URL rule(s) from {os.path.join("src", "routes", "__init__.py")}'
 
 
