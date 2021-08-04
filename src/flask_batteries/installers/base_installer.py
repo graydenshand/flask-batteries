@@ -96,19 +96,25 @@ class FlaskExtInstaller:
         rm_env_vars(**cls.envs)
 
     @classmethod
-    def verify(cls):
+    def verify(cls, raise_for_error=False):
         for dep in cls.dependencies:
             if not dep.verify():
+                if raise_for_error:
+                    raise InstallError(f"{cls} dependency {dep} not installed")
                 return False
         # Verify package is istalled from PyPI
         if cls.package_name is not None:
             reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
             installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
             if cls.package_name not in installed_packages:
+                if raise_for_error:
+                    raise InstallError(f"{cls.package_name} not installed from PyPI")
                 return False
         # Verify __init__.py
         lines_to_verify = cls.imports + cls.inits + cls.attachments
         if not verify_file(os.path.join("src", "__init__.py"), lines_to_verify):
+            if raise_for_error:
+                raise InstallError(f"{cls} __init__.py is incorrect")
             return False
 
         # Verify config.py
@@ -119,6 +125,8 @@ class FlaskExtInstaller:
             + cls.testing_config
         )
         if not verify_file(os.path.join("src", "config.py"), lines_to_verify):
+            if raise_for_error:
+                raise InstallError(f"{cls} config.py is incorrect")
             return False
 
         # Verify ENVS
@@ -127,6 +135,8 @@ class FlaskExtInstaller:
             for k, v in cls.envs.items():
                 declaration = env_var(k, v).replace(v, "")
                 pattern = r"(use|export) DATABASE_URL=(.*)\n"
-                if re.match(pattern, body) is None:
+                if re.search(pattern, body) is None:
+                    if raise_for_error:
+                        raise InstallError(f"{cls} ENVs missing from venv activate")
                     return False
         return True

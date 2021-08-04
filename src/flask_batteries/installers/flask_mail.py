@@ -11,7 +11,8 @@ class FlaskMailInstaller(FlaskExtInstaller):
     attachments = ["mail.init_app(app)"]
 
     base_config = [
-        "# Flask-Mail" 'MAIL_SERVER = "localhost"',
+        "# Flask-Mail",
+        'MAIL_SERVER = "localhost"',
         "MAIL_PORT = 25",
         "MAIL_USE_TLS = False",
         "MAIL_USE_SSL = False",

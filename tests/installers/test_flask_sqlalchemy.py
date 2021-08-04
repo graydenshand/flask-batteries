@@ -6,7 +6,7 @@ from flask_batteries.config import TAB
 
 
 def test_flask_sqlalchemy_installer(app, cli):
-    assert FlaskSQLAlchemyInstaller.verify()
+    assert FlaskSQLAlchemyInstaller.verify(raise_for_error=True)
 
     # Call uninstall
     result = cli.invoke(uninstall, "sqlalchemy")
@@ -58,4 +58,4 @@ def test_flask_sqlalchemy_installer(app, cli):
     assert f'{TAB}SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")' in content
     assert f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False" in content
 
-    assert FlaskSQLAlchemyInstaller.verify()
+    assert FlaskSQLAlchemyInstaller.verify(raise_for_error=True)

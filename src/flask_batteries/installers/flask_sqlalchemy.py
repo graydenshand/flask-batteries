@@ -3,6 +3,7 @@ import click
 import os
 import shutil
 from sqlalchemy_utils import create_database, database_exists
+from ..helpers import InstallError
 
 
 class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
@@ -48,13 +49,15 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
             shutil.rmtree(os.path.join("test", "models"))
 
     @classmethod
-    def verify(cls):
+    def verify(cls, raise_for_error=False):
         if (
             not os.path.exists(os.path.join("src", "models"))
             or not os.path.exists(os.path.join("src", "models", "__init__.py"))
             or not os.path.exists(os.path.join("test", "models"))
             or not os.path.exists(os.path.join("test", "models", "__init__.py"))
         ):
+            if raise_for_error:
+                raise InstallError(f"{cls} models directory does not exist")
             return False
         else:
-            return super().verify()
+            return super().verify(raise_for_error=raise_for_error)

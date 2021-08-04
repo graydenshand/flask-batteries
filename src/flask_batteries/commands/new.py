@@ -36,7 +36,6 @@ from ..helpers import (
     default="main",
 )
 def new(name, path_to_venv, skip_webpack, git_initial_branch):
-    click.echo("Generating new app named: %s" % name)
 
     # Set PATH_TO_VENV env variable, used by FlaskMigrateInstaller later
     os.environ["PATH_TO_VENV"] = path_to_venv
@@ -57,6 +56,10 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
                 f"Can't create directory '{name}' as it already exists"
             )
         os.chdir(name)
+
+    click.echo("Generating new app named: %s" % name)
+
+    if not os.path.exists(path_to_venv):
         if os.name != "nt":
             subprocess.run(["python3", "-m", "venv", path_to_venv], check=True)
         else:
@@ -86,7 +89,10 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
 
     # Initialize git repo
     subprocess.run(
-        [f"git init --initial-branch={git_initial_branch}"], check=True, shell=True, stdout=subprocess.DEVNULL
+        [f"git init --initial-branch={git_initial_branch}"],
+        check=True,
+        shell=True,
+        stdout=subprocess.DEVNULL,
     )
 
     # Install PyPI package dependencies

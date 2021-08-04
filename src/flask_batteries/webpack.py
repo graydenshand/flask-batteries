@@ -29,7 +29,7 @@ def webpack_init(app):
                 except requests.exceptions.ConnectionError as e:
                     # Webpack dev server is not running
                     app.logger.warning(
-                        "Compiling static assets. To avoid this warning, start the webpack dev server in a new shell with `flask watch`."
+                        "Compiling static assets. To avoid this warning, start the webpack dev server in a new shell with `flask webpack watch`."
                     )
                     app.config["USE_WEBPACK_DEV_SERVER"] = False
                     subprocess.run("npx webpack", shell=True)

@@ -4,7 +4,7 @@ import subprocess
 import shutil
 import click
 import os
-from ..helpers import activate
+from ..helpers import activate, InstallError
 import sys
 
 
@@ -42,8 +42,10 @@ class FlaskMigrateInstaller(FlaskExtInstaller):
             shutil.rmtree(os.path.join("src", "migrations"))
 
     @classmethod
-    def verify(cls):
+    def verify(cls, raise_for_error=False):
         if not os.path.exists(os.path.join("src", "migrations")):
+            if raise_for_error:
+                raise InstallError(f"{cls} migrations folder missing")
             return False
         else:
-            return super().verify()
+            return super().verify(raise_for_error)

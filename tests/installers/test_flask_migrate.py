@@ -6,7 +6,7 @@ from flask_batteries.config import TAB
 
 
 def test_flask_migrate_installer(app, cli):
-    assert FlaskMigrateInstaller.verify()
+    assert FlaskMigrateInstaller.verify(raise_for_error=True)
 
     # Call uninstall
     result = cli.invoke(uninstall, "migrate")
@@ -40,4 +40,4 @@ def test_flask_migrate_installer(app, cli):
     assert 'migrate = Migrate(db, directory="src/migrations")' in content
     assert f"{TAB}{TAB}migrate.init_app(app)" in content
 
-    assert FlaskMigrateInstaller.verify()
+    assert FlaskMigrateInstaller.verify(raise_for_error=True)
