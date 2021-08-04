@@ -39,7 +39,7 @@ Open up https://127.0.0.1:5000/ in your browser and you should see your app runn
 ### Webpack
 By default, the generated app uses Webpack to bundle static assets. Use the `flask build` command to compile the assets and generate a 'static' folder. This command should be run in your build pipeline when pushing to production.
 
-When running the app in development mode, the static assets will be generated regenerated every time the debug server restarts. This can be somewhat slow. Webpack has a development server that makes this process much faster. You can run the Webpack dev server in a new terminal window by using the `flask watch` command. 
+When running the app in development mode, the static assets will be regenerated every time the debug server restarts. This can be somewhat slow. Webpack has a development server that makes this process much faster. You can run the Webpack dev server in a separate terminal window by using the `flask watch` command. 
 
 The Webpack dev server will serve your assets on a different port. So, when it is running, we need to pull static assets from `localhost:3000/static`, and when it's not running we need to pull static assets from `localhost:5000/static`. The `static_url_for(filename)` function handles this logic and will route requests to the webpack server only if it is running. This function is automatically passed to all of your Jinja2 templates, and can be imported elsewhere via `from flask_batteries import static_url_for`.
 
