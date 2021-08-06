@@ -7,6 +7,7 @@ Use webpack_init(app) to attach dev tools and template vars to an application in
 import requests
 from flask import current_app, url_for
 import subprocess
+import os
 
 
 def static_url_for(path):
@@ -44,6 +45,22 @@ def webpack_init(app):
                 except requests.exceptions.ConnectionError as e:
                     # Webpack dev server is not running
                     app.config["USE_WEBPACK_DEV_SERVER"] = False
+
+        # Add all files in ./src/assets directory to watched files list
+        extra_files = []
+        watched_directories = ["./src/assets"]
+        for directory in watched_directories:
+            for dirpath, dirs, files in os.walk(directory):
+                for filename in files:
+                    filename = os.path.join(dirpath, filename)
+                    if os.path.isfile(filename):
+                        extra_files.append(filename)
+        if os.name != 'nt':
+            os.environ["FLASK_RUN_EXTRA_FILES"] = ":".join(extra_files)
+        else:
+            os.environ["FLASK_RUN_EXTRA_FILES"] = ";".join(extra_files)
+
+
 
     @app.context_processor
     def webpack_init_template_vars():
