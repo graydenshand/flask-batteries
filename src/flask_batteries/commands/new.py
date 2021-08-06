@@ -10,7 +10,7 @@ import shutil
 import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
-from ..installers import FlaskMigrateInstaller
+from ..installers import FlaskMigrateInstaller, FlaskSQLAlchemyInstaller
 from ..helpers import (
     set_env_vars,
     pip,
@@ -35,7 +35,12 @@ from ..helpers import (
     help="The name of the main git branch for the project. Defaults to 'main'.",
     default="main",
 )
-def new(name, path_to_venv, skip_webpack, git_initial_branch):
+@click.option(
+    "--skip-db",
+    is_flag=True,
+    help="Don't install Flask-SQLAlchemy & Flask-Migrate",
+)
+def new(name, path_to_venv, skip_webpack, git_initial_branch, skip_db):
 
     # Set PATH_TO_VENV env variable, used by FlaskMigrateInstaller later
     os.environ["PATH_TO_VENV"] = path_to_venv
@@ -161,9 +166,11 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
             target=os.path.join("src", "static", "stylesheets", "base.css"),
         )
 
-        add_to_config(base_config=["FLASK_BATTERIES_USE_WEBPACK=False"])
+        add_to_config(development_config=["FLASK_BATTERIES_USE_WEBPACK=False"])
 
     # Install Flask-Migrate and Flask-SQLAlchemy
-    FlaskMigrateInstaller.install()
+    if not skip_db:
+        FlaskSQLAlchemyInstaller.install()
+        FlaskMigrateInstaller.install()
 
     click.echo("Done")

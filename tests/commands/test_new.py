@@ -8,7 +8,7 @@ import subprocess
 import pathspec
 import traceback
 from flask_batteries.helpers import activate
-
+from flask_batteries.installers import FlaskSQLAlchemyInstaller, FlaskMigrateInstaller
 
 def test_new_doesnt_fail(cli):
     result = cli.invoke(new)
@@ -86,3 +86,11 @@ def test_new_with_git_branch(cli):
 
     branches = subprocess.check_output("git branch", shell=True)
     assert branches == b"* primary\n"
+
+
+def test_new_with_skip_db(cli):
+    result = cli.invoke(new, ["--skip-db"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
+    assert not FlaskSQLAlchemyInstaller.verify()
+    assert not FlaskMigrateInstaller.verify()

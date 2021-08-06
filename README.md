@@ -182,4 +182,6 @@ Other featutes:
 * ✅ Allow skipping of webpack, and using a simple 'static' folder. 
 * ❌ Allow using of standard route decorators instead of method views
 * ✅ Allow custom url_rules specification in `flask generate route` command. 
-* ❌ When installing SQLAlchemy, add db intitialization/seeding to main testing fixture
+* ✅ When installing SQLAlchemy, add db intitialization/seeding to main testing fixture
+* ❌ Allow using MySQL instead of PostgreSQL in `flask install sqlalchemy --mysql`
+* ✅ Allow skipping of Flask-SQLAlchemy and Flask-Migrate with `flask new app --skip_db`
