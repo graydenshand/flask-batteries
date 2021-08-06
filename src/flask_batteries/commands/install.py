@@ -11,7 +11,7 @@ def install():
 @click.command(help="Install Flask-SQLAlchemy")
 def sqlalchemy():
     click.echo("Installing Flask-SQLAlchemy")
-    FlaskSQLAlchemyInstaller.install()
+    InstallManager.install(FlaskSQLAlchemyInstaller)
     click.echo("Done")
 
 
@@ -21,7 +21,7 @@ install.add_command(sqlalchemy)
 @click.command(help="Install Flask-SQLAlchemy")
 def migrate():
     click.echo("Installing Flask-Migrate")
-    FlaskMigrateInstaller.install()
+    InstallManager.install(FlaskMigrateInstaller)
     click.echo("Done")
 
 
@@ -31,7 +31,7 @@ install.add_command(migrate)
 @click.command(help="Install Flask-WTF")
 def wtf():
     click.echo("Installing Flask-WTF")
-    FlaskWTFInstaller.install()
+    InstallManager.install(FlaskWTFInstaller)
     click.echo("Done")
 
 
@@ -41,7 +41,7 @@ install.add_command(wtf)
 @click.command(help="Install Flask-Login")
 def login():
     click.echo("Installing Flask-Login")
-    FlaskLoginInstaller.install()
+    InstallManager.install(FlaskLoginInstaller)
     click.echo("Done")
     click.echo("Additional configuration steps required:")
     click.echo(f'{TAB}1. Complete "load_user()" function in src/__init__.py')
@@ -53,7 +53,7 @@ install.add_command(login)
 @click.command(help="Install Flask-Mail")
 def mail():
     click.echo("Installing Flask-Mail")
-    FlaskMailInstaller.install()
+    InstallManager.install(FlaskMailInstaller)
     click.echo("Done")
     click.echo("Additional configuration steps required:")
     click.echo(f"{TAB}1. Set Flask-Mail config variables in src/config.py")

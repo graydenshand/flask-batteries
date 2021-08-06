@@ -10,7 +10,7 @@ def uninstall():
 @click.command(help="Uninstall Flask-SQLAlchemy")
 def sqlalchemy():
     click.echo("Uninstalling Flask-SQLAlchemy")
-    FlaskSQLAlchemyInstaller.uninstall()
+    InstallManager.uninstall(FlaskSQLAlchemyInstaller)
     click.echo("Done")
 
 
@@ -20,7 +20,7 @@ uninstall.add_command(sqlalchemy)
 @click.command(help="Uninstall Flask-SQLAlchemy")
 def migrate():
     click.echo("Installing Flask-Migrate")
-    FlaskMigrateInstaller.uninstall()
+    InstallManager.uninstall(FlaskMigrateInstaller)
     click.echo("Done")
 
 
@@ -30,7 +30,7 @@ uninstall.add_command(migrate)
 @click.command(help="Uninstall Flask-WTF")
 def wtf():
     click.echo("Installing Flask-WTF")
-    FlaskWTFInstaller.uninstall()
+    InstallManager.uninstall(FlaskWTFInstaller)
     click.echo("Done")
 
 
@@ -40,7 +40,7 @@ uninstall.add_command(wtf)
 @click.command(help="Uninstall Flask-Login")
 def login():
     click.echo("Installing Flask-Login")
-    FlaskLoginInstaller.uninstall()
+    InstallManager.uninstall(FlaskLoginInstaller)
     click.echo("Done")
 
 
@@ -50,7 +50,7 @@ uninstall.add_command(login)
 @click.command(help="Uninstall Flask-Mail")
 def mail():
     click.echo("Installing Flask-Mail")
-    FlaskMailInstaller.uninstall()
+    InstallManager.uninstall(FlaskMailInstaller)
     click.echo("Done")
 
 

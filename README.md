@@ -176,12 +176,10 @@ Commands to add:
 * ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
 * ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
 * ❌ `flask generate/destroy form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
-* ✅ `flask generate/destroy stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. 
+* ✅ `flask generate/destroy stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. If webpack is not being used, creates a new .css stylesheet. 
 
 Other featutes:
 * ✅ Allow skipping of webpack, and using a simple 'static' folder. 
-* ❌ Allow using of standard route decorators instead of method views
 * ✅ Allow custom url_rules specification in `flask generate route` command. 
-* ✅ When installing SQLAlchemy, add db intitialization/seeding to main testing fixture
-* ❌ Allow using MySQL instead of PostgreSQL in `flask install sqlalchemy --mysql`
+* ✅ When installing SQLAlchemy, add db setup/teardown to main testing fixture
 * ✅ Allow skipping of Flask-SQLAlchemy and Flask-Migrate with `flask new app --skip_db`

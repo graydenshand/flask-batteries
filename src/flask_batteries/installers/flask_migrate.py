@@ -10,7 +10,6 @@ import sys
 
 class FlaskMigrateInstaller(FlaskExtInstaller):
     package_name = "Flask-Migrate"
-    dependencies = [FlaskSQLAlchemyInstaller]
     imports = ["from flask_migrate import Migrate"]
     inits = ['migrate = Migrate(db, directory="src/migrations")']
     attachments = ["migrate.init_app(app)"]

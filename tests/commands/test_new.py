@@ -10,6 +10,7 @@ import traceback
 from flask_batteries.helpers import activate
 from flask_batteries.installers import FlaskSQLAlchemyInstaller, FlaskMigrateInstaller
 
+
 def test_new_doesnt_fail(cli):
     result = cli.invoke(new)
     assert result.exit_code == 0, traceback.print_exception(*result.exc_info)

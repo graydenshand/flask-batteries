@@ -1,12 +1,13 @@
 from ..conf_tests import app, cli
 from flask_batteries.commands import install, uninstall
-from flask_batteries.installers import FlaskSQLAlchemyInstaller
+from flask_batteries.installers import FlaskSQLAlchemyInstaller, FlaskMigrateInstaller
 import os
 from flask_batteries.config import TAB
 
 
 def test_flask_sqlalchemy_installer(app, cli):
     assert FlaskSQLAlchemyInstaller.verify(raise_for_error=True)
+    assert FlaskMigrateInstaller.verify(raise_for_error=True)
 
     # Call uninstall
     result = cli.invoke(uninstall, "sqlalchemy")
@@ -31,6 +32,9 @@ def test_flask_sqlalchemy_installer(app, cli):
 
     assert f'{TAB}SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")' not in content
     assert f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False" not in content
+
+    # Check that FlaskMigrate was also uninstalled
+    assert not FlaskMigrateInstaller.verify()
 
     assert not FlaskSQLAlchemyInstaller.verify()
 

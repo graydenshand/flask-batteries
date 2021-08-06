@@ -12,25 +12,19 @@ class FlaskExtInstaller:
     imports = []
     inits = []
     attachments = []
+    shell_vars = []
     base_config = []
     production_config = []
     development_config = []
     testing_config = []
-    dependencies = []
     pypi_dependencies = []
     envs = {}
-    shell_vars = []
 
     @classmethod
     def install(cls):
         # Prevent installing same package twice
         if cls.verify():
             raise InstallError(f"{cls.package_name} is already installed")
-
-        # Install any dependencies if not already installed
-        for dep in cls.dependencies:
-            if not dep.verify():
-                dep.install()
 
         # Install package from PyPI
         if cls.package_name is not None:
@@ -97,11 +91,6 @@ class FlaskExtInstaller:
 
     @classmethod
     def verify(cls, raise_for_error=False):
-        for dep in cls.dependencies:
-            if not dep.verify():
-                if raise_for_error:
-                    raise InstallError(f"{cls} dependency {dep} not installed")
-                return False
         # Verify package is istalled from PyPI
         if cls.package_name is not None:
             reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
@@ -111,7 +100,7 @@ class FlaskExtInstaller:
                     raise InstallError(f"{cls.package_name} not installed from PyPI")
                 return False
         # Verify __init__.py
-        lines_to_verify = cls.imports + cls.inits + cls.attachments
+        lines_to_verify = cls.imports + cls.inits + cls.attachments + cls.shell_vars
         if not verify_file(os.path.join("src", "__init__.py"), lines_to_verify):
             if raise_for_error:
                 raise InstallError(f"{cls} __init__.py is incorrect")

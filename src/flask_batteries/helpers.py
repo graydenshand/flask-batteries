@@ -145,9 +145,11 @@ def add_to_init(
                 for attachment in attachments:
                     lines.insert(i, f"{TAB}{TAB}{attachment}")
                     i += 1
-            elif lines[i] == f"{TAB}{TAB}{TAB}# --flask_batteries_mark shell_vars--":
+            elif (
+                lines[i] == f"{TAB}{TAB}{TAB}{TAB}# --flask_batteries_mark shell_vars--"
+            ):
                 for shell_var in shell_vars:
-                    lines.insert(i, f"{TAB}{TAB}{TAB}{shell_var}")
+                    lines.insert(i, f"{TAB}{TAB}{TAB}{TAB}{shell_var}")
                     i += 1
                 break
             i += 1

@@ -13,6 +13,7 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     imports = ["from flask_sqlalchemy import SQLAlchemy"]
     inits = ["db = SQLAlchemy()"]
     attachments = ["db.init_app(app)", "db.create_all()"]
+    shell_vars = ['"db": db,']
     base_config = [
         'SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")',
         "SQLALCHEMY_TRACK_MODIFICATIONS = False",
