@@ -53,12 +53,10 @@ def webpack_init(app):
                     filename = os.path.join(dirpath, filename)
                     if os.path.isfile(filename):
                         extra_files.append(filename)
-        if os.name != 'nt':
+        if os.name != "nt":
             os.environ["FLASK_RUN_EXTRA_FILES"] = ":".join(extra_files)
         else:
             os.environ["FLASK_RUN_EXTRA_FILES"] = ";".join(extra_files)
-
-
 
     @app.context_processor
     def webpack_init_template_vars():

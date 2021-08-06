@@ -133,8 +133,7 @@ class FlaskExtInstaller:
         with open(activate(), "r") as f:
             body = f.read()
             for k, v in cls.envs.items():
-                declaration = env_var(k, v).replace(v, "")
-                pattern = r"(use|export) DATABASE_URL=(.*)\n"
+                pattern = rf"(use|export) {k}=(.*)\n"
                 if re.search(pattern, body) is None:
                     if raise_for_error:
                         raise InstallError(f"{cls} ENVs missing from venv activate")
