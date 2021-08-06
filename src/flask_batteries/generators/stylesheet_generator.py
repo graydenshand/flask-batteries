@@ -19,10 +19,9 @@ class StylesheetGenerator(BaseGenerator):
 
         if use_webpack:
             with open(
-                os.path.join("src", "assets", "stylesheets", f"{name}.scss"), "w"
+                os.path.join("src", "assets", "stylesheets", f"_{name}.scss"), "w"
             ) as f:
-                f.write(f"/*\nPlace {name} styles here\n*/")
-                yield f'Created {os.path.join("src", "assets", "stylesheets", f"{name}.scss")}'
+                yield f'Created {os.path.join("src", "assets", "stylesheets", f"_{name}.scss")}'
             with open(
                 os.path.join("src", "assets", "stylesheets", "styles.scss"), "a"
             ) as f:
@@ -32,7 +31,6 @@ class StylesheetGenerator(BaseGenerator):
             with open(
                 os.path.join("src", "static", "stylesheets", f"{name}.css"), "w"
             ) as f:
-                f.write(f"/*\nPlace {name} styles here\n*/")
                 yield f'Created {os.path.join("src", "static", "stylesheets", f"{name}.css")}'
 
     @staticmethod
@@ -40,8 +38,8 @@ class StylesheetGenerator(BaseGenerator):
         use_webpack = current_app.config.get("FLASK_BATTERIES_USE_WEBPACK", True)
 
         if use_webpack:
-            os.remove(os.path.join("src", "assets", "stylesheets", f"{name}.scss"))
-            yield f'Destroyed {os.path.join("src", "assets", "stylesheets", f"{name}.scss")}'
+            os.remove(os.path.join("src", "assets", "stylesheets", f"_{name}.scss"))
+            yield f'Destroyed {os.path.join("src", "assets", "stylesheets", f"_{name}.scss")}'
             with open(
                 os.path.join("src", "assets", "stylesheets", "styles.scss"), "r+"
             ) as f:

@@ -25,7 +25,7 @@ def test_stylesheet_generator(cli, app):
         )
     assert result.returncode == 0, result.stdout
     assert os.path.exists(
-        os.path.join("src", "assets", "stylesheets", "typography.scss")
+        os.path.join("src", "assets", "stylesheets", "_typography.scss")
     )
     with open(os.path.join("src", "assets", "stylesheets", "styles.scss"), "r") as f:
         content = f.read()
@@ -47,7 +47,7 @@ def test_stylesheet_generator(cli, app):
             shell=True,
         )
     assert not os.path.exists(
-        os.path.join("src", "assets", "stylesheets", "typography.scss")
+        os.path.join("src", "assets", "stylesheets", "_typography.scss")
     )
     with open(os.path.join("src", "assets", "stylesheets", "styles.scss"), "r") as f:
         content = f.read()

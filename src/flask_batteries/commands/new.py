@@ -157,7 +157,7 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch):
             target=os.path.join("src", "static", "images", "flask-icon.png"),
         )
         copy_template(
-            os.path.join("src", "assets", "stylesheets", "base.scss"),
+            os.path.join("src", "assets", "stylesheets", "_base.scss"),
             target=os.path.join("src", "static", "stylesheets", "base.css"),
         )
 
