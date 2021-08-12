@@ -42,7 +42,7 @@ class FlaskMailInstaller(FlaskExtInstaller):
             shutil.rmtree(os.path.join("src", "templates", "mail"))
 
     @classmethod
-    def verify(cls):
+    def verify(cls, raise_for_error=False):
         """
         Extend default verify function by verifying 'mail' folder in 'src/templates'
         """

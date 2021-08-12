@@ -60,3 +60,18 @@ def mail():
 
 
 install.add_command(mail)
+
+
+@click.command(help="Install Flask-Talisman")
+def talisman():
+    click.echo("Installing Flask-Talisman")
+    InstallManager.install(FlaskTalismanInstaller)
+    click.echo("Done")
+    click.echo("Additional configuration steps recommended:")
+    click.echo(
+        f"{TAB}1. Set content security policy (CSP) as documented here: "
+        "https://github.com/GoogleCloudPlatform/flask-talisman#content-security-policy"
+    )
+
+
+install.add_command(talisman)

@@ -31,7 +31,7 @@ class FlaskWTFInstaller(FlaskExtInstaller):
             shutil.rmtree(os.path.join("test", "forms"))
 
     @classmethod
-    def verify(cls, verbose=False):
+    def verify(cls, raise_for_error=False):
         if (
             not os.path.exists(os.path.join("src", "forms"))
             or not os.path.exists(os.path.join("src", "forms", "__init__.py"))

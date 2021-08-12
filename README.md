@@ -169,9 +169,10 @@ Commands to add:
 * ✅ `flask (un)install login`: (un)install Flask-Login
 * ❌ `flask (un)install principal`: (un)install Flask-Mail
 * ✅ `flask (un)install mail`: (un)install Flask-Mail
-* ❌ `flask (un)install talisman`: (un)install Flask-Talisman
+* ✅ `flask (un)install talisman`: (un)install Flask-Talisman
 * ❌ `flask (un)install cors`: (un)install Flask-CORS
 * ❌ `flask (un)install security`: (un)install Flask-Security
+* ❌ `flask (un)install sessions`: (un)install Flask-Sessions
 * ❌ `flask (un)install restful`: (un)install Flask-Restful
 * ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
 * ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.

@@ -57,7 +57,7 @@ class FlaskLoginInstaller(FlaskExtInstaller):
             f.write("\n".join(lines))
 
     @classmethod
-    def verify(cls):
+    def verify(cls, raise_for_error=False):
         """
         Extend default verify method by checking "load_user" function in src/__init__.py
         """

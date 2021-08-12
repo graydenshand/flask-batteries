@@ -3,6 +3,8 @@ from .flask_migrate import FlaskMigrateInstaller
 from .flask_wtf import FlaskWTFInstaller
 from .flask_login import FlaskLoginInstaller
 from .flask_mail import FlaskMailInstaller
+from .flask_talisman import FlaskTalismanInstaller
+from ..helpers import InstallError
 
 
 class InstallManager:
@@ -20,7 +22,7 @@ class InstallManager:
 
     @classmethod
     def uninstall(cls, installer):
-        if installer.verify():
+        if installer.verify(raise_for_error=True):
             dependents = [
                 key for key, val in cls.dependencies.items() if installer in val
             ]

@@ -3,6 +3,7 @@ from flask_batteries.commands import install, uninstall
 from flask_batteries.installers import FlaskWTFInstaller
 import os
 from flask_batteries.config import TAB
+import traceback
 
 
 def test_flask_wtf_installer(app, cli):

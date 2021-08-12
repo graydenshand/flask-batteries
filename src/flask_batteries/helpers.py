@@ -163,18 +163,16 @@ def remove_from_file(filename, lines_to_remove=[]):
     Loop through the lines of a file, removing specified lines
     """
     with open(filename, "r+") as f:
-        lines = f.read().split("\n")
+        content = f.read()
 
-        i = 0
-        while i < len(lines):
-            if lines[i].lstrip(" ") in lines_to_remove:
-                del lines[i]
-                i -= 1
-            i += 1
+        for line in lines_to_remove:
+            content = re.sub(
+                fr"^\s*{re.escape(line)}.*?\n", "", content, flags=re.MULTILINE
+            )
 
         f.seek(0)
         f.truncate()
-        f.write("\n".join(lines))
+        f.write(content)
 
 
 def verify_file(filename, lines_to_verify=[]):
@@ -182,15 +180,12 @@ def verify_file(filename, lines_to_verify=[]):
     Loop through the lines of a file, verifying specified lines exist
     """
     with open(filename, "r") as f:
-        lines = f.read().split("\n")
+        content = f.read()
 
-        i = 0
         counter = 0
-        while i < len(lines):
-            if lines[i].lstrip(" ") in lines_to_verify:
+        for line in lines_to_verify:
+            if re.search(fr"^\s*{re.escape(line)}.*?\n", content, re.MULTILINE):
                 counter += 1
-            i += 1
-
         if counter == len(lines_to_verify):
             return True
         else:
