@@ -174,6 +174,7 @@ Commands to add:
 * ❌ `flask (un)install security`: (un)install Flask-Security
 * ❌ `flask (un)install sessions`: (un)install Flask-Sessions
 * ❌ `flask (un)install restful`: (un)install Flask-Restful
+* ❌ `flask (un)install bootstrap`: (un)install Flask-Bootstrap
 * ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
 * ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
 * ❌ `flask generate/destroy form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
@@ -183,7 +184,7 @@ Commands to add:
 * ✅ `flask translate compile`: Compile all translations (Flask-Babel)
 
 Other featutes:
-* ✅ Allow skipping of webpack, and using a simple 'static' folder. 
-* ✅ Allow custom url_rules specification in `flask generate route` command. 
-* ✅ When installing SQLAlchemy, add db setup/teardown to main testing fixture
-* ✅ Allow skipping of Flask-SQLAlchemy and Flask-Migrate with `flask new app --skip_db`
+* ✅ Allow skipping of webpack, and using a simple 'static' folder: `flask new --skip-webpack`. 
+* ✅ Allow skipping of Flask-SQLAlchemy and Flask-Migrate: `flask new app --skip-db`
+* ✅ Allow creating a primary git branch other than `main`: `flask new app --git-initial-branch master`
+* ✅ Allow custom url_rules specification when generating routes:  `flask generate route sign_up /sign-up /register /join` 
