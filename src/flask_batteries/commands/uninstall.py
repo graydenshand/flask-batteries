@@ -75,3 +75,12 @@ def babel():
 
 
 uninstall.add_command(babel)
+
+@click.command(help="Uninstall Flask-Marshmallow")
+def marshmallow():
+    click.echo("Uninstalling Flask-Marshmallow")
+    InstallManager.uninstall(FlaskMarshmallowInstaller)
+    click.echo("Done")
+
+
+uninstall.add_command(marshmallow)

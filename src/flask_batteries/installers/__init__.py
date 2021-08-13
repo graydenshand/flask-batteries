@@ -1,6 +1,7 @@
 from .flask_babel import FlaskBabelInstaller
 from .flask_login import FlaskLoginInstaller
 from .flask_mail import FlaskMailInstaller
+from .flask_marshmallow import FlaskMarshmallowInstaller
 from .flask_migrate import FlaskMigrateInstaller
 from .flask_sqlalchemy import FlaskSQLAlchemyInstaller
 from .flask_talisman import FlaskTalismanInstaller
@@ -9,7 +10,10 @@ from ..helpers import InstallError
 
 
 class InstallManager:
-    dependencies = {FlaskMigrateInstaller: [FlaskSQLAlchemyInstaller]}
+    dependencies = {
+        FlaskMigrateInstaller: [FlaskSQLAlchemyInstaller],
+        FlaskMarshmallowInstaller: [FlaskSQLAlchemyInstaller]
+    }
 
     @classmethod
     def install(cls, installer):

@@ -17,7 +17,7 @@ def test_flask_wtf_installer(app, cli):
     assert os.path.exists(os.path.join("src", "forms"))
     assert os.path.exists(os.path.join("src", "forms", "__init__.py"))
 
-    assert FlaskWTFInstaller.verify()
+    assert FlaskWTFInstaller.verify(raise_for_error=True)
 
     # Call uninstall
     result = cli.invoke(uninstall, "wtf")

@@ -3,7 +3,7 @@ from ..helpers import TAB
 
 
 class FlaskTalismanInstaller(FlaskExtInstaller):
-    package_name = "flask-talisman"
+    package_name = "Flask-Talisman"
     imports = ["from flask_talisman import Talisman"]
     inits = ["talisman = Talisman()"]
     attachments = [

@@ -98,8 +98,8 @@ class FlaskExtInstaller:
         # Verify package is istalled from PyPI
         if cls.package_name is not None:
             reqs = subprocess.check_output(f"{pip()} freeze -q -q", shell=True)
-            installed_packages = [r.decode().split("==")[0] for r in reqs.split()]
-            if cls.package_name not in installed_packages:
+            installed_packages = [r.decode().split("==")[0].lower() for r in reqs.split()]
+            if cls.package_name.lower() not in installed_packages:
                 if raise_for_error:
                     raise InstallError(f"{cls.package_name} not installed from PyPI")
                 return False

@@ -85,3 +85,13 @@ def babel():
 
 
 install.add_command(babel)
+
+
+@click.command(help="Install Flask-Marshmallow")
+def marshmallow():
+    click.echo("Installing Flask-Marshmallow")
+    InstallManager.install(FlaskMarshmallowInstaller)
+    click.echo("Done")
+
+
+install.add_command(marshmallow)

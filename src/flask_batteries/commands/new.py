@@ -10,7 +10,7 @@ import shutil
 import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
-from ..installers import FlaskMigrateInstaller, FlaskSQLAlchemyInstaller
+from ..installers import InstallManager, FlaskMigrateInstaller, FlaskSQLAlchemyInstaller, FlaskMarshmallowInstaller
 from ..helpers import (
     set_env_vars,
     pip,
@@ -168,9 +168,10 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch, skip_db):
 
         add_to_config(development_config=["BATTERIES_USE_WEBPACK = False"])
 
-    # Install Flask-Migrate and Flask-SQLAlchemy
+    # Install Flask-SQLAlchemy, Flask-Migrate, and Flask-Marshmallow
     if not skip_db:
-        FlaskSQLAlchemyInstaller.install()
-        FlaskMigrateInstaller.install()
+        InstallManager.install(FlaskSQLAlchemyInstaller)
+        InstallManager.install(FlaskMigrateInstaller)
+        InstallManager.install(FlaskMarshmallowInstaller)
 
     click.echo("Done")
