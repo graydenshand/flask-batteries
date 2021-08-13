@@ -12,7 +12,7 @@ from ..helpers import InstallError
 class InstallManager:
     dependencies = {
         FlaskMigrateInstaller: [FlaskSQLAlchemyInstaller],
-        FlaskMarshmallowInstaller: [FlaskSQLAlchemyInstaller]
+        FlaskMarshmallowInstaller: [FlaskSQLAlchemyInstaller],
     }
 
     @classmethod

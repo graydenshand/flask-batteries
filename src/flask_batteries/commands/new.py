@@ -10,7 +10,12 @@ import shutil
 import pathspec
 import importlib.resources
 from ..config import PATH_TO_VENV, TAB
-from ..installers import InstallManager, FlaskMigrateInstaller, FlaskSQLAlchemyInstaller, FlaskMarshmallowInstaller
+from ..installers import (
+    InstallManager,
+    FlaskMigrateInstaller,
+    FlaskSQLAlchemyInstaller,
+    FlaskMarshmallowInstaller,
+)
 from ..helpers import (
     set_env_vars,
     pip,

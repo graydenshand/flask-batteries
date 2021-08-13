@@ -157,7 +157,7 @@ To run the tests, simply call `tox` from the root directory.
 
 ## Roadmap
 ### V 1.0.0
-Commands to add:
+Commands:
 * ✅ `flask new`: generate a new Flask-Batteries app
 * ✅ `flask webpack build`: build static assets with Webpack
 * ✅ `flask webpack watch`: build and watch static assets with Webpack
