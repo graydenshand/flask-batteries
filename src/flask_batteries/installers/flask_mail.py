@@ -10,16 +10,15 @@ class FlaskMailInstaller(FlaskExtInstaller):
     inits = ["mail = Mail()"]
     attachments = ["mail.init_app(app)"]
 
-    base_config = [
-        "# Flask-Mail",
-        'MAIL_SERVER = "localhost"',
-        "MAIL_PORT = 25",
-        "MAIL_USE_TLS = False",
-        "MAIL_USE_SSL = False",
-        "MAIL_USERNAME = None",
-        "MAIL_PASSWORD = None",
-        "MAIL_DEFAULT_SENDER = None",
-    ]
+    base_config = {
+        "MAIL_SERVER": '"localhost"',
+        "MAIL_PORT": "25",
+        "MAIL_USE_TLS": "False",
+        "MAIL_USE_SSL": "False",
+        "MAIL_USERNAME": "None",
+        "MAIL_PASSWORD": "None",
+        "MAIL_DEFAULT_SENDER": "None",
+    }
 
     @classmethod
     def install(cls):
@@ -49,4 +48,4 @@ class FlaskMailInstaller(FlaskExtInstaller):
         if not os.path.exists(os.path.join("src", "templates", "mail")):
             return False
         else:
-            return super().verify()
+            return super().verify(raise_for_error=raise_for_error)

@@ -13,10 +13,11 @@ class FlaskExtInstaller:
     inits = []
     attachments = []
     shell_vars = []
-    base_config = []
-    production_config = []
-    development_config = []
-    testing_config = []
+    decorators = []
+    base_config = {}
+    production_config = {}
+    development_config = {}
+    testing_config = {}
     pypi_dependencies = []
     envs = {}
 
@@ -45,6 +46,7 @@ class FlaskExtInstaller:
             initializations=cls.inits,
             attachments=cls.attachments,
             shell_vars=cls.shell_vars,
+            decorators=cls.decorators,
         )
 
         # Edit config.py
@@ -74,15 +76,17 @@ class FlaskExtInstaller:
             )
 
         # Remove initialization from __init__.py and create_app() func
-        lines_to_remove = cls.imports + cls.inits + cls.attachments + cls.shell_vars
+        lines_to_remove = (
+            cls.imports + cls.inits + cls.attachments + cls.shell_vars + cls.decorators
+        )
         remove_from_file(os.path.join("src", "__init__.py"), lines_to_remove)
 
         # Edit config.py
         lines_to_remove = (
-            cls.base_config
-            + cls.production_config
-            + cls.development_config
-            + cls.testing_config
+            list(cls.base_config.keys())
+            + list(cls.production_config.keys())
+            + list(cls.development_config.keys())
+            + list(cls.testing_config.keys())
         )
         remove_from_file(os.path.join("src", "config.py"), lines_to_remove)
 
@@ -100,22 +104,26 @@ class FlaskExtInstaller:
                     raise InstallError(f"{cls.package_name} not installed from PyPI")
                 return False
         # Verify __init__.py
-        lines_to_verify = cls.imports + cls.inits + cls.attachments + cls.shell_vars
-        if not verify_file(os.path.join("src", "__init__.py"), lines_to_verify):
-            if raise_for_error:
-                raise InstallError(f"{cls} __init__.py is incorrect")
+        lines_to_verify = (
+            cls.imports + cls.inits + cls.attachments + cls.shell_vars + cls.decorators
+        )
+        if not verify_file(
+            os.path.join("src", "__init__.py"), lines_to_verify, raise_for_error=True
+        ):
             return False
 
         # Verify config.py
         lines_to_verify = (
-            cls.base_config
-            + cls.production_config
-            + cls.development_config
-            + cls.testing_config
+            list(cls.base_config.keys())
+            + list(cls.production_config.keys())
+            + list(cls.development_config.keys())
+            + list(cls.testing_config.keys())
         )
-        if not verify_file(os.path.join("src", "config.py"), lines_to_verify):
-            if raise_for_error:
-                raise InstallError(f"{cls} config.py is incorrect")
+        if not verify_file(
+            os.path.join("src", "config.py"),
+            lines_to_verify,
+            raise_for_error=raise_for_error,
+        ):
             return False
 
         # Verify ENVS

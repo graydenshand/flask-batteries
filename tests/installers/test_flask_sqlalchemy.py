@@ -31,7 +31,9 @@ def test_flask_sqlalchemy_installer(app, cli):
     with open(os.path.join("src", "config.py"), "r") as f:
         content = f.read().split("\n")
 
-    assert f'{TAB}SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")' not in content
+    assert (
+        f'{TAB}SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")' not in content
+    )
     assert f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False" not in content
 
     # Check that FlaskMigrate was also uninstalled
@@ -60,7 +62,7 @@ def test_flask_sqlalchemy_installer(app, cli):
     with open(os.path.join("src", "config.py"), "r+") as f:
         content = f.read().split("\n")
 
-    assert f'{TAB}SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")' in content
+    assert f'{TAB}SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")' in content
     assert f"{TAB}SQLALCHEMY_TRACK_MODIFICATIONS = False" in content
 
     assert FlaskSQLAlchemyInstaller.verify(raise_for_error=True)

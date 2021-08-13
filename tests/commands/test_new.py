@@ -70,7 +70,7 @@ def test_new_with_skip_webpack(cli):
 
     with open(os.path.join("src", "config.py"), "r") as f:
         content = f.read()
-        assert "FLASK_BATTERIES_USE_WEBPACK" in content
+        assert "BATTERIES_USE_WEBPACK" in content
 
     if os.name != "nt":
         run_tests = subprocess.run("source venv/bin/activate && pytest", shell=True)

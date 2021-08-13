@@ -75,3 +75,13 @@ def talisman():
 
 
 install.add_command(talisman)
+
+
+@click.command(help="Install Flask-Babel")
+def babel():
+    click.echo("Installing Flask-Babel")
+    InstallManager.install(FlaskBabelInstaller)
+    click.echo("Done")
+
+
+install.add_command(babel)

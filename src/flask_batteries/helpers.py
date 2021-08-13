@@ -83,10 +83,10 @@ def rm_env_vars(**kwargs):
 
 
 def add_to_config(
-    base_config=[],
-    production_config=[],
-    development_config=[],
-    testing_config=[],
+    base_config={},
+    production_config={},
+    development_config={},
+    testing_config={},
 ):
     """
     Add lines to src/config.py at various marks
@@ -97,20 +97,20 @@ def add_to_config(
         i = 0
         while i < len(lines):
             if lines[i] == f"{TAB}# --flask_batteries_mark base_config--":
-                for item in base_config:
-                    lines.insert(i, f"{TAB}{item}")
+                for k, v in base_config.items():
+                    lines.insert(i, f"{TAB}{k} = {v}")
                     i += 1
             elif lines[i] == f"{TAB}# --flask_batteries_mark production_config--":
-                for item in production_config:
-                    lines.insert(i, f"{TAB}{item}")
+                for k, v in production_config.items():
+                    lines.insert(i, f"{TAB}{k} = {v}")
                     i += 1
             elif lines[i] == f"{TAB}# --flask_batteries_mark development_config--":
-                for item in development_config:
-                    lines.insert(i, f"{TAB}{item}")
+                for k, v in development_config.items():
+                    lines.insert(i, f"{TAB}{k} = {v}")
                     i += 1
             elif lines[i] == f"{TAB}# --flask_batteries_mark testing_config--":
-                for item in testing_config:
-                    lines.insert(i, f"{TAB}{item}")
+                for k, v in testing_config.items():
+                    lines.insert(i, f"{TAB}{k} = {v}")
                     i += 1
                 break
             i += 1
@@ -120,10 +120,7 @@ def add_to_config(
 
 
 def add_to_init(
-    imports=[],
-    initializations=[],
-    attachments=[],
-    shell_vars=[],
+    imports=[], initializations=[], attachments=[], shell_vars=[], decorators=[]
 ):
     """
     Add lines to src/__init__.py at various marks
@@ -151,6 +148,10 @@ def add_to_init(
                 for shell_var in shell_vars:
                     lines.insert(i, f"{TAB}{TAB}{TAB}{TAB}{shell_var}")
                     i += 1
+            elif lines[i] == f"{TAB}return app":
+                for line in decorators:
+                    lines.insert(i, f"{TAB}{TAB}{line}")
+                    i += 1
                 break
             i += 1
         f.seek(0)
@@ -175,21 +176,19 @@ def remove_from_file(filename, lines_to_remove=[]):
         f.write(content)
 
 
-def verify_file(filename, lines_to_verify=[]):
+def verify_file(filename, lines_to_verify, raise_for_error=False):
     """
     Loop through the lines of a file, verifying specified lines exist
     """
     with open(filename, "r") as f:
         content = f.read()
-
-        counter = 0
         for line in lines_to_verify:
-            if re.search(fr"^\s*{re.escape(line)}.*?\n", content, re.MULTILINE):
-                counter += 1
-        if counter == len(lines_to_verify):
-            return True
-        else:
-            return False
+            if not re.search(fr"^\s*{re.escape(line)}.*?\n", content, re.MULTILINE):
+                if raise_for_error:
+                    raise InstallError(f"'{line}' missing from {filename}")
+                else:
+                    return False
+        return True
 
 
 env = Environment(

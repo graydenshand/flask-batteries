@@ -15,7 +15,7 @@ class StylesheetGenerator(BaseGenerator):
 
     @staticmethod
     def generate(name):
-        use_webpack = current_app.config.get("FLASK_BATTERIES_USE_WEBPACK", True)
+        use_webpack = current_app.config.get("BATTERIES_USE_WEBPACK", True)
 
         if use_webpack:
             with open(
@@ -35,7 +35,7 @@ class StylesheetGenerator(BaseGenerator):
 
     @staticmethod
     def destroy(name):
-        use_webpack = current_app.config.get("FLASK_BATTERIES_USE_WEBPACK", True)
+        use_webpack = current_app.config.get("BATTERIES_USE_WEBPACK", True)
 
         if use_webpack:
             os.remove(os.path.join("src", "assets", "stylesheets", f"_{name}.scss"))

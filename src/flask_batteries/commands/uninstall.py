@@ -65,3 +65,13 @@ def talisman():
 
 
 uninstall.add_command(talisman)
+
+
+@click.command(help="Uninstall Flask-Babel")
+def babel():
+    click.echo("Uninstalling Flask-Babel")
+    InstallManager.uninstall(FlaskBabelInstaller)
+    click.echo("Done")
+
+
+uninstall.add_command(babel)

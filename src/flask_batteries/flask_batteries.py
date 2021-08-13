@@ -11,6 +11,9 @@ class Batteries(object):
         app.cli.add_command(new)
         app.cli.add_command(uninstall)
 
-        if app.config.get("FLASK_BATTERIES_USE_WEBPACK") != False:
+        if app.config.get("BATTERIES_USE_WEBPACK") != False:
             webpack_init(app)
             app.cli.add_command(webpack)
+
+        if app.config.get("BATTERIES_USE_BABEL") == True:
+            app.cli.add_command(translate)

@@ -165,7 +165,7 @@ Commands to add:
 * ✅ `flask (un)install migrate`: (un)install Flask-Migrate
 * ✅ `flask (un)install wtf`: (un)install Flask-WTF
 * ❌ `flask (un)install uploads`: (un)install Flask-Uploads
-* ❌ `flask (un)install babel`: (un)install Flask-Babel
+* ✅ `flask (un)install babel`: (un)install Flask-Babel
 * ✅ `flask (un)install login`: (un)install Flask-Login
 * ❌ `flask (un)install principal`: (un)install Flask-Mail
 * ✅ `flask (un)install mail`: (un)install Flask-Mail
@@ -178,6 +178,9 @@ Commands to add:
 * ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
 * ❌ `flask generate/destroy form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
 * ✅ `flask generate/destroy stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. If webpack is not being used, creates a new .css stylesheet. 
+* ✅ `flask translate init`: Initialize a new translation language (Flask-Babel)
+* ✅ `flask translate update`: Update all translations (Flask-Babel)
+* ✅ `flask translate compile`: Compile all translations (Flask-Babel)
 
 Other featutes:
 * ✅ Allow skipping of webpack, and using a simple 'static' folder. 

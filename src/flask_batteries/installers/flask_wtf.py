@@ -40,4 +40,4 @@ class FlaskWTFInstaller(FlaskExtInstaller):
         ):
             return False
         else:
-            return super().verify()
+            return super().verify(raise_for_error=raise_for_error)

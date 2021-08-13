@@ -14,17 +14,16 @@ class FlaskSQLAlchemyInstaller(FlaskExtInstaller):
     inits = ["db = SQLAlchemy()"]
     attachments = ["db.init_app(app)", "db.create_all()"]
     shell_vars = ['"db": db,']
-    base_config = [
-        'SQLALCHEMY_DATABASE_URI=os.environ.get("DATABASE_URL")',
-        "SQLALCHEMY_TRACK_MODIFICATIONS = False",
-    ]
-    development_config = [
-        'SQLALCHEMY_DATABASE_URI=os.environ.get("DEV_DATABASE_URL")',
-    ]
-    testing_config = [
-        'SQLALCHEMY_DATABASE_URI=os.environ.get("TEST_DATABASE_URL")',
-    ]
-    envs = {}
+    base_config = {
+        "SQLALCHEMY_DATABASE_URI": 'os.environ.get("DATABASE_URL")',
+        "SQLALCHEMY_TRACK_MODIFICATIONS": "False",
+    }
+    development_config = {
+        "SQLALCHEMY_DATABASE_URI": 'os.environ.get("DEV_DATABASE_URL")',
+    }
+    testing_config = {
+        "SQLALCHEMY_DATABASE_URI": 'os.environ.get("TEST_DATABASE_URL")',
+    }
 
     @classmethod
     def install(cls):

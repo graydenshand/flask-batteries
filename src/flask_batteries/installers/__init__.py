@@ -1,9 +1,10 @@
-from .flask_sqlalchemy import FlaskSQLAlchemyInstaller
-from .flask_migrate import FlaskMigrateInstaller
-from .flask_wtf import FlaskWTFInstaller
+from .flask_babel import FlaskBabelInstaller
 from .flask_login import FlaskLoginInstaller
 from .flask_mail import FlaskMailInstaller
+from .flask_migrate import FlaskMigrateInstaller
+from .flask_sqlalchemy import FlaskSQLAlchemyInstaller
 from .flask_talisman import FlaskTalismanInstaller
+from .flask_wtf import FlaskWTFInstaller
 from ..helpers import InstallError
 
 
