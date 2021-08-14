@@ -1,7 +1,9 @@
 import click
 import os
-from ..generators import RouteGenerator, StylesheetGenerator
+from ..generators import *
 from flask.cli import with_appcontext
+from flask import current_app
+from ..installers import FlaskSQLAlchemyInstaller
 
 
 @click.group(help="Commands for generating files")
@@ -33,3 +35,15 @@ def stylesheet(name):
 
 
 generate.add_command(stylesheet)
+
+
+@click.command(help="Generate a new db model")
+@click.argument("name")
+def model(name):
+    click.echo(f"Generating model: {name}")
+    for checkpoint in ModelGenerator.generate(name):
+        click.secho(checkpoint, fg="green")
+    click.echo("Done")
+
+
+generate.add_command(model)

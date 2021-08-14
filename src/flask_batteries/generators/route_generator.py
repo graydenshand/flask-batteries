@@ -1,5 +1,5 @@
 from .base_generator import BaseGenerator
-from ..helpers import snake_to_camel_case, create_file
+from ..helpers import snake_to_pascal_case, create_file
 from ..config import TAB
 import os
 import re
@@ -10,7 +10,7 @@ class RouteGenerator(BaseGenerator):
     def generate(name, url_rules=[]):
         name = name.lower()
         template_data = {
-            "camel_name": snake_to_camel_case(name),
+            "pascal_name": snake_to_pascal_case(name),
             "name": name,
             "url_name": name.replace("_", "-"),
         }
@@ -89,17 +89,17 @@ route_template = """from flask import render_template
 from flask.views import MethodView
 
 
-class {camel_name}(MethodView):
+class {pascal_name}(MethodView):
     def get(self):
         return render_template("{name}.html")
 
-{name}_view = {camel_name}.as_view("{name}")"""
+{name}_view = {pascal_name}.as_view("{name}")"""
 
 # Template for generated file in src/templates
 view_template = """{{% extends 'base.html' %}}
 
 {{% block body %}}
-<h1>{camel_name}</h1>
+<h1>{pascal_name}</h1>
 <p>Edit <b><i>src/templates/{name}.html</i></b> to make changes to this page.</p>
 {{% endblock %}}
 """

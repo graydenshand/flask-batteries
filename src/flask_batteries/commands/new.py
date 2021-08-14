@@ -171,7 +171,7 @@ def new(name, path_to_venv, skip_webpack, git_initial_branch, skip_db):
             target=os.path.join("src", "static", "stylesheets", "base.css"),
         )
 
-        add_to_config(development_config=["BATTERIES_USE_WEBPACK = False"])
+        add_to_config(development_config={"BATTERIES_USE_WEBPACK": "False"})
 
     # Install Flask-SQLAlchemy, Flask-Migrate, and Flask-Marshmallow
     if not skip_db:

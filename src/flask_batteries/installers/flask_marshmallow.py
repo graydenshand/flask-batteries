@@ -1,5 +1,5 @@
 from .base_installer import FlaskExtInstaller
-from ..helpers import TAB
+from ..config import TAB
 
 
 class FlaskMarshmallowInstaller(FlaskExtInstaller):
@@ -7,4 +7,4 @@ class FlaskMarshmallowInstaller(FlaskExtInstaller):
     pypi_dependencies = ["marshmallow-sqlalchemy"]
     imports = ["from flask_marshmallow import Marshmallow"]
     inits = ["ma = Marshmallow()"]
-    attachments = ["ma.init_app()"]
+    attachments = ["ma.init_app(app)"]

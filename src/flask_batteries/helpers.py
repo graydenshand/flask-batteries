@@ -43,7 +43,7 @@ def env_var(key, val):
         return f"set {key}={val}"
 
 
-def snake_to_camel_case(string):
+def snake_to_pascal_case(string):
     return "".join([seg[0].upper() + seg[1:] for seg in string.split("_")])
 
 

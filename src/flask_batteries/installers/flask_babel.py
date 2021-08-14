@@ -1,5 +1,5 @@
 from .base_installer import FlaskExtInstaller, InstallError
-from ..helpers import TAB
+from ..config import TAB
 import os
 import shutil
 import re

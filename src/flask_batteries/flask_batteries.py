@@ -1,5 +1,8 @@
 from .webpack import webpack_init
 from .commands import *
+from .commands.generate import model as generate_model
+from .commands.destroy import model as destroy_model
+from .commands import generate, destroy
 import os
 
 

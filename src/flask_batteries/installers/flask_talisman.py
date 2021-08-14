@@ -1,5 +1,5 @@
 from .base_installer import FlaskExtInstaller
-from ..helpers import TAB
+from ..config import TAB
 
 
 class FlaskTalismanInstaller(FlaskExtInstaller):

@@ -6,16 +6,16 @@ import traceback
 
 
 def test_flask_marshmallow_installer(app, cli):
-    assert not FlaskMarshmallowInstaller.verify()
-
-    # Install the extension
-    result = cli.invoke(install, "marshmallow")
-    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
-
     assert FlaskMarshmallowInstaller.verify(raise_for_error=True)
 
-    # Call uninstall
+    # Uninstall the extension
     result = cli.invoke(uninstall, "marshmallow")
     assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
     assert not FlaskMarshmallowInstaller.verify()
+
+    # Call install
+    result = cli.invoke(install, "marshmallow")
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
+    assert FlaskMarshmallowInstaller.verify(raise_for_error=True)

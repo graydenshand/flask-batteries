@@ -1,7 +1,6 @@
 import click
 import os
-from ..helpers import snake_to_camel_case
-from ..generators import RouteGenerator, StylesheetGenerator
+from ..generators import *
 from flask.cli import with_appcontext
 
 
@@ -33,3 +32,15 @@ def stylesheet(name):
 
 
 destroy.add_command(stylesheet)
+
+
+@click.command(help="Destroy a model")
+@click.argument("name")
+def model(name):
+    click.echo(f"Destroying model: {name}")
+    for checkpoint in ModelGenerator.destroy(name):
+        click.secho(checkpoint, fg="red")
+    click.echo("Done")
+
+
+destroy.add_command(model)
