@@ -23,7 +23,6 @@ destroy.add_command(route)
 
 @click.command(help="Destroy a stylesheet")
 @click.argument("name")
-@with_appcontext
 def stylesheet(name):
     click.echo(f"Destroying stylesheet: {name}")
     for checkpoint in StylesheetGenerator.destroy(name):

@@ -26,7 +26,6 @@ generate.add_command(route)
 
 @click.command(help="Generate a new stylesheet")
 @click.argument("name")
-@with_appcontext
 def stylesheet(name):
     click.echo(f"Generating stylesheet: {name}")
     for checkpoint in StylesheetGenerator.generate(name):

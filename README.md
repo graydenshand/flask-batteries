@@ -176,7 +176,7 @@ Commands:
 * ❌ `flask (un)install restful`: (un)install Flask-Restful
 * ❌ `flask (un)install bootstrap`: (un)install Flask-Bootstrap
 * ✅ `flask generate/destroy route`: generate/destroy a route, template, and test
-* ❌ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
+* ✅ `flask generate/destroy model`: generate/destroy a Flask-SQLAlchemy model, a new test file, and Flask-Marshmallow schema.
 * ❌ `flask generate/destroy form`: generates a Flask-WTF form, and imports it to the `forms/__init__.py` file. 
 * ✅ `flask generate/destroy stylesheet`: generates a new .scss stylesheet and imports it to the `assets/stylesheets/styles.scss` file. If webpack is not being used, creates a new .css stylesheet. 
 * ✅ `flask translate init`: Initialize a new translation language (Flask-Babel)

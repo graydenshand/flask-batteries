@@ -1,6 +1,6 @@
 from .base_generator import BaseGenerator
 import os
-from flask import current_app
+from ..helpers import verify_file
 
 
 class StylesheetGenerator(BaseGenerator):
@@ -15,8 +15,9 @@ class StylesheetGenerator(BaseGenerator):
 
     @staticmethod
     def generate(name):
-        use_webpack = current_app.config.get("BATTERIES_USE_WEBPACK", True)
-
+        use_webpack = not verify_file(
+            os.path.join("src", "config.py"), ["BATTERIES_USE_WEBPACK"]
+        )
         if use_webpack:
             with open(
                 os.path.join("src", "assets", "stylesheets", f"_{name}.scss"), "w"
@@ -35,7 +36,9 @@ class StylesheetGenerator(BaseGenerator):
 
     @staticmethod
     def destroy(name):
-        use_webpack = current_app.config.get("BATTERIES_USE_WEBPACK", True)
+        use_webpack = not verify_file(
+            os.path.join("src", "config.py"), ["BATTERIES_USE_WEBPACK"]
+        )
 
         if use_webpack:
             os.remove(os.path.join("src", "assets", "stylesheets", f"_{name}.scss"))

@@ -1,5 +1,5 @@
 from ..conf_tests import app, cli
-from flask_batteries.commands import new, generate
+from flask_batteries.commands import new, generate, destroy
 import os
 import traceback
 from flask_batteries.config import TAB
@@ -8,22 +8,10 @@ import subprocess
 
 
 def test_stylesheet_generator(cli, app):
-    """
-    Generate files
+    # Generate file
+    result = cli.invoke(generate, ["stylesheet", "typography"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
 
-    Must run this command in subprocess, as it relies
-    on an active context from the generated app.
-    """
-    if os.name != "nt":
-        result = subprocess.run(
-            f"source {activate()} && flask generate stylesheet typography", shell=True
-        )
-    else:
-        result = subprocess.run(
-            f"{activate().rstrip('.bat')} && flask generate stylesheet typography",
-            shell=True,
-        )
-    assert result.returncode == 0, result.stdout
     assert os.path.exists(
         os.path.join("src", "assets", "stylesheets", "_typography.scss")
     )
@@ -31,21 +19,10 @@ def test_stylesheet_generator(cli, app):
         content = f.read()
         assert "@use 'typography'" in content
 
-    """
-    Destroy generated files
-    
-    Must run this command in subprocess, as it relies
-    on an active context from the generated app.
-    """
-    if os.name != "nt":
-        result = subprocess.run(
-            f"source {activate()} && flask destroy stylesheet typography", shell=True
-        )
-    else:
-        result = subprocess.run(
-            f"{activate().rstrip('.bat')} && flask destroy stylesheet typography",
-            shell=True,
-        )
+    # Destroy generated files
+    result = cli.invoke(destroy, ["stylesheet", "typography"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
+
     assert not os.path.exists(
         os.path.join("src", "assets", "stylesheets", "_typography.scss")
     )
@@ -55,53 +32,18 @@ def test_stylesheet_generator(cli, app):
 
 
 def test_stylesheet_generator_without_webpack(cli):
-    """
-    Generate files
+    # Create a new app without webpack integration
+    result = cli.invoke(new, ["app", "--skip-webpack"])
 
-    Must run this command in subprocess, as it relies
-    on an active context from the generated app.
-    """
-    result = cli.invoke(new, ["--skip-webpack"])
-    if os.name != "nt":
-        result = subprocess.run(
-            f"source {activate()} && flask generate stylesheet typography", shell=True
-        )
-    else:
-        result = subprocess.run(
-            f"{activate().rstrip('.bat')} && flask generate stylesheet typography",
-            shell=True,
-        )
-    assert result.returncode == 0, result.stdout
+    # Generate file
+    result = cli.invoke(generate, ["stylesheet", "typography"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
     assert os.path.exists(
         os.path.join("src", "static", "stylesheets", "typography.css")
     )
 
-    """
-    Destroy generated files 
-
-    Must run this command in subprocess, as it relies
-    on an active context from the generated app.
-    """
-    result = cli.invoke(new, ["--skip-webpack"])
-    if os.name != "nt":
-        result = subprocess.run(
-            f"source {activate()} && flask generate stylesheet typography", shell=True
-        )
-    else:
-        result = subprocess.run(
-            f"{activate().rstrip('.bat')} && flask generate stylesheet typography",
-            shell=True,
-        )
-    assert result.returncode == 0, result.stdout
-    if os.name != "nt":
-        result = subprocess.run(
-            f"source {activate()} && flask destroy stylesheet typography", shell=True
-        )
-    else:
-        result = subprocess.run(
-            f"{activate().rstrip('.bat')} && flask destroy stylesheet typography",
-            shell=True,
-        )
+    result = cli.invoke(destroy, ["stylesheet", "typography"])
+    assert result.exit_code == 0, traceback.print_exception(*result.exc_info)
     assert not os.path.exists(
         os.path.join("src", "static", "stylesheets", "typography.css")
     )

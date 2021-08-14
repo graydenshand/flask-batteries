@@ -8,7 +8,11 @@ import subprocess
 import pathspec
 import traceback
 from flask_batteries.helpers import activate
-from flask_batteries.installers import FlaskSQLAlchemyInstaller, FlaskMigrateInstaller
+from flask_batteries.installers import (
+    FlaskSQLAlchemyInstaller,
+    FlaskMigrateInstaller,
+    FlaskMarshmallowInstaller,
+)
 
 
 def test_new_doesnt_fail(cli):
@@ -95,3 +99,4 @@ def test_new_with_skip_db(cli):
 
     assert not FlaskSQLAlchemyInstaller.verify()
     assert not FlaskMigrateInstaller.verify()
+    assert not FlaskMarshmallowInstaller.verify()
